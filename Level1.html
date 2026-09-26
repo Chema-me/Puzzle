@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Level 1</title>
+<style>
+ body{background:#FFFBEB;font-family:Consolas,monospace;display:flex;flex-direction:column;align-items:center;padding:30px;margin:0}
+ h2{font-family:sans-serif;color:#1C1917}
+ #board{width:350px;background:white;border:1px solid #E7E5E4;padding:15px;border-radius:10px;display:flex;flex-direction:column;gap:8px;box-shadow:0 4px 15px rgba(0,0,0,0.05)}
+.tile{background:#F5F5F4;border:1px solid #D6D3D1;padding:12px;border-radius:6px;cursor:move;color:#1C1917}
+.tile:hover{background:#E7E5E4}
+ #btn{margin-top:20px;background:#1C1917;color:white;border:none;padding:12px 25px;border-radius:6px}
+ #msg{margin-top:15px;font-family:sans-serif;font-weight:bold}
+</style>
+</head>
+<body>
+<h2>LEVEL 1 - SUSUN KODE</h2>
+<div id="board"></div>
+<button id="btn" onclick="cek()">CEK JAWABAN</button>
+<div id="msg"></div>
+<script>
+const benar=['<!DOCTYPE html>','<html>','<head>','<title>Page</title>','</head>','<body>','<h1>Hello</h1>','</body>','</html>'];
+let acak=[...benar].sort(()=>Math.random()-0.5);let drag=null;
+function render(){let b=document.getElementById('board');b.innerHTML='';acak.forEach((t,i)=>{let d=document.createElement('div');d.className='tile';d.draggable=true;d.textContent=t;d.ondragstart=()=>drag=i;d.ondragover=e=>e.preventDefault();d.ondrop=()=>{let x=acak[drag];acak[drag]=acak[i];acak[i]=x;render()};b.appendChild(d)})}
+function cek(){let m=document.getElementById('msg');if(JSON.stringify(acak)===JSON.stringify(benar)){m.style.color='green';m.textContent='BENAR!'}else{m.style.color='red';m.textContent='SALAH - COBA LAGI'}}
+render();
+</script>
+</body>
+</html>
