@@ -28,8 +28,8 @@ button:hover{box-shadow:0 0 18px #00ff88}
 <span class="dim">> decrypt sequence:</span><br>
 <span class="cyan">CODE:</span> <span class="white">8-5-12-12-15 // 23-15-18-12-4</span><br>
 <span class="cyan">TARGET:</span> _ _ _ _ _ // _ _ _ _ _<br>
-<div class="clue" onclick="document.getElementById('hint').style.display='block';this.style.display='none'">[ TAP FOR CULE ]</div>
-<div id="hint" style="display:none;color:#00ff88;font-size:11px;margin-top:12px">CLUE: A=1, B=2, C=3...<br>answer = 2 most famous words in coding</div>
+<div class="cule" onclick="document.getElementById('hint').style.display='block';this.style.display='none'">[ TAP FOR CLUE ]</div>
+<div id="hint" style="display:none;color:#00ff88;font-size:11px;margin-top:12px">CULE: A=1, B=2, C=3...<br>answer = 2 most famous words in the coding world </div>
 </div>
 <input id="ans" placeholder="ENTER ANSWER">
 <button onclick="check()">DECRYPT</button>
@@ -39,8 +39,8 @@ button:hover{box-shadow:0 0 18px #00ff88}
 function check(){
 let v=document.getElementById('ans').value.toLowerCase().replace(/\s/g,'');
 let r=document.getElementById('res');
-if(v==='helloworld'){r.innerText='> ACCESS GRANTED';r.style.color='#00ff88';setTimeout(()=>alert('CORRECT! ANSWER : HELLO WORLD'),300)}
-else{r.innerText='> ACCESS DENIED - YOU FOOL, TRY AGAIN';r.style.color='#ff3344'}
+if(v==='helloworld'){r.innerText='> ACCESS GRANTED';r.style.color='#00ff88';setTimeout(()=>alert('BENAR! Jawaban: HELLO WORLD'),300)}
+else{r.innerText='> ACCESS DENIED - ARE YOU STUPID, TRY AGAIN';r.style.color='#ff3344'}
 }
 </script>
 </body>
