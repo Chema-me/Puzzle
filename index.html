@@ -39,7 +39,7 @@ button:hover{box-shadow:0 0 18px #00ff88}
 function check(){
 let v=document.getElementById('ans').value.toLowerCase().replace(/\s/g,'');
 let r=document.getElementById('res');
-if(v==='helloworld'){r.innerText='> ACCESS GRANTED';r.style.color='#00ff88';setTimeout(()=>alert('BENAR! Jawaban: HELLO WORLD'),300)}
+if(v==='helloworld'){r.innerText='> ACCESS GRANTED';r.style.color='#00ff88';setTimeout(()=>window.location.href = 'level2.html' , 800)
 else{r.innerText='> ACCESS DENIED - ARE YOU STUPID, TRY AGAIN';r.style.color='#ff3344'}
 }
 </script>
