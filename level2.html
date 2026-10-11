@@ -19,7 +19,6 @@ button{width:100%;background:#00ff88;color:#000;border:none;padding:12px;border-
 .card b{color:#fff;display:block;margin-bottom:4px}
 .card span{font-size:11px;opacity:.6;word-break:break-all}
 #status{margin-top:10px;font-size:12px}
-/* VIDEO MODAL */
 #videoModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:99;justify-content:center;align-items:center;padding:20px}
 #videoModal video{width:100%;max-width:700px;border-radius:12px;border:1px solid #00ff88;box-shadow:0 0 30px rgba(0,255,136,.4)}
 #closeBtn{position:absolute;top:20px;right:20px;background:#00ff88;color:#000;border:none;padding:8px 14px;border-radius:8px;font-weight:700;cursor:pointer}
@@ -40,7 +39,7 @@ button{width:100%;background:#00ff88;color:#000;border:none;padding:12px;border-
 
 <div id="videoModal">
 <button id="closeBtn" onclick="closeClip()">X CLOSE</button>
-<video id="clipPlayer" controls></video>
+<video id="clipPlayer" controls autoplay playsinline loop></video>
 </div>
 
 <script>
@@ -52,7 +51,6 @@ const LINKS = [
   { title: "LINK #5 - MIRROR", url: "https://link-kamu-5.com", type: "link" }
 ];
 
-// RANDOMIZER - TETAP
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 shuffle(LINKS);
 
@@ -78,7 +76,7 @@ function render(){
     if(link.type==='clip'){
       a.href='javascript:void(0)';
       a.onclick=()=>openClip(link.url);
-      a.innerHTML=`<b>${link.title} [CLIP]</b><span>PLAY INSIDE - NO YT/TIKTOK/GOOGLE</span>`;
+      a.innerHTML=`<b>${link.title} [CLIP]</b><span>PLAY INSIDE - AUTO PLAY</span>`;
     } else {
       a.href=link.url;
       a.target='_blank';
@@ -89,14 +87,18 @@ function render(){
 }
 
 function openClip(src){
-  document.getElementById('clipPlayer').src=src;
-  document.getElementById('videoModal').style.display='flex';
-  document.getElementById('clipPlayer').play();
+  let modal=document.getElementById('videoModal');
+  let player=document.getElementById('clipPlayer');
+  player.src=src;
+  modal.style.display='flex';
+  player.play();
 }
 function closeClip(){
-  document.getElementById('videoModal').style.display='none';
-  document.getElementById('clipPlayer').pause();
-  document.getElementById('clipPlayer').src='';
+  let modal=document.getElementById('videoModal');
+  let player=document.getElementById('clipPlayer');
+  modal.style.display='none';
+  player.pause();
+  player.src='';
 }
 </script>
 </body>
