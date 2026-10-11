@@ -14,48 +14,47 @@ h1{margin:0;color:#fff;font-size:28px;letter-spacing:5px;text-shadow:0 0 12px #0
 input{width:100%;background:#000;border:1px solid #00ff88;color:#00ff88;padding:12px;border-radius:8px;text-align:center;letter-spacing:3px;box-sizing:border-box;font-family:inherit}
 button{width:100%;background:#00ff88;color:#000;border:none;padding:12px;border-radius:8px;margin-top:10px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:inherit}
 .grid{display:none;grid-template-columns:1fr;gap:12px;margin-top:20px}
-.card{display:block;text-decoration:none;background:#000;border:1px solid rgba(0,255,136,.2);border-radius:10px;padding:14px;color:#00ff88;transition:.2s}
+.card{display:block;text-decoration:none;background:#000;border:1px solid rgba(0,255,136,.2);border-radius:10px;padding:14px;color:#00ff88;transition:.2s;cursor:pointer}
 .card:hover{border-color:#00ff88;box-shadow:0 0 15px rgba(0,255,136,.3);transform:translateY(-2px)}
 .card b{color:#fff;display:block;margin-bottom:4px}
 .card span{font-size:11px;opacity:.6;word-break:break-all}
 #status{margin-top:10px;font-size:12px}
+/* VIDEO MODAL */
+#videoModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:99;justify-content:center;align-items:center;padding:20px}
+#videoModal video{width:100%;max-width:700px;border-radius:12px;border:1px solid #00ff88;box-shadow:0 0 30px rgba(0,255,136,.4)}
+#closeBtn{position:absolute;top:20px;right:20px;background:#00ff88;color:#000;border:none;padding:8px 14px;border-radius:8px;font-weight:700;cursor:pointer}
 </style>
 </head>
 <body>
 <div class="box">
 <h1>FINISH THIS</h1>
 <div class="sub">LEVEL 02 // ACCESS LINKS - RANDOMIZED SYSTEM</div>
-
 <div class="lock" id="lockBox">
 <div style="font-size:11px;opacity:.6;margin-bottom:10px">> ENTER LEVEL 01 KEY TO UNLOCK</div>
 <input id="key" placeholder="ENTER KEY">
 <button onclick="unlock()">UNLOCK LINKS</button>
 <div id="status"></div>
 </div>
-
 <div class="grid" id="grid"></div>
 </div>
 
+<div id="videoModal">
+<button id="closeBtn" onclick="closeClip()">X CLOSE</button>
+<video id="clipPlayer" controls></video>
+</div>
+
 <script>
-// === GANTI LINK KAMU DISINI ===
 const LINKS = [
-  { title: "LINK #1 - MAIN", url: "https://link-kamu-1.com" },
-  { title: "LINK #2 - BACKUP", url: "https://link-kamu-2.com" },
-  { title: "LINK #3 - SERVER EU", url: "https://link-kamu-3.com" },
-  { title: "LINK #4 - SERVER US", url: "https://link-kamu-4.com" },
-  { title: "LINK #5 - MIRROR", url: "https://link-kamu-5.com" }
+  { title: "LINK #1 - MAIN", url: "https://link-kamu-1.com", type: "link" },
+  { title: "LINK #2 - SECRET CLIP", url: "clip.mp4", type: "clip" },
+  { title: "LINK #3 - SERVER EU", url: "https://link-kamu-3.com", type: "link" },
+  { title: "LINK #4 - SERVER US", url: "https://link-kamu-4.com", type: "link" },
+  { title: "LINK #5 - MIRROR", url: "https://link-kamu-5.com", type: "link" }
 ];
 
-// === SYSTEM RANDOMIZER - ACAK OTOMATIS TIAP DIBUKA ===
-function shuffle(a){
-  for(let i=a.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
-  }
-  return a;
-}
+// RANDOMIZER - TETAP
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 shuffle(LINKS);
-// === END RANDOMIZER ===
 
 function unlock(){
   let v=document.getElementById('key').value.toLowerCase().replace(/\s/g,'');
@@ -76,11 +75,28 @@ function render(){
   LINKS.forEach(link=>{
     let a=document.createElement('a');
     a.className='card';
-    a.href=link.url;
-    a.target='_blank';
-    a.innerHTML=`<b>${link.title}</b><span>${link.url}</span>`;
+    if(link.type==='clip'){
+      a.href='javascript:void(0)';
+      a.onclick=()=>openClip(link.url);
+      a.innerHTML=`<b>${link.title} [CLIP]</b><span>PLAY INSIDE - NO YT/TIKTOK/GOOGLE</span>`;
+    } else {
+      a.href=link.url;
+      a.target='_blank';
+      a.innerHTML=`<b>${link.title}</b><span>${link.url}</span>`;
+    }
     g.appendChild(a);
   });
+}
+
+function openClip(src){
+  document.getElementById('clipPlayer').src=src;
+  document.getElementById('videoModal').style.display='flex';
+  document.getElementById('clipPlayer').play();
+}
+function closeClip(){
+  document.getElementById('videoModal').style.display='none';
+  document.getElementById('clipPlayer').pause();
+  document.getElementById('clipPlayer').src='';
 }
 </script>
 </body>
