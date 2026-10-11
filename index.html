@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FINISH THIS - LEVEL 01</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+body{margin:0;background:#050507;color:#00ff88;font-family:'JetBrains Mono',monospace;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
+.box{width:100%;max-width:520px;border:1px solid rgba(0,255,136,.3);border-radius:16px;padding:30px;background:rgba(0,255,136,.03);box-shadow:0 0 40px rgba(0,255,136,.15)}
+h1{margin:0;color:#fff;font-size:32px;letter-spacing:6px;text-shadow:0 0 12px #00ff88}
+.sub{font-size:11px;opacity:.5;margin-top:6px;letter-spacing:2px}
+.term{margin-top:24px;background:#000;border-radius:12px;padding:20px;line-height:1.8;border:1px solid #111}
+.cyan{color:#00e5ff}.white{color:#fff}.dim{color:#555}
+.cule{margin-top:14px;font-size:11px;color:#444;border:1px dashed #222;padding:10px;border-radius:8px;cursor:pointer}
+.cule:hover{color:#00ff88;border-color:#00ff88}
+input{width:100%;background:#000;border:1px solid #00ff88;color:#00ff88;padding:14px;border-radius:8px;margin-top:18px;text-align:center;letter-spacing:3px;box-sizing:border-box;font-family:inherit}
+button{width:100%;background:#00ff88;color:#000;border:none;padding:14px;border-radius:8px;margin-top:10px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:inherit}
+button:hover{box-shadow:0 0 18px #00ff88}
+#res{text-align:center;margin-top:12px;font-size:12px}
+</style>
+</head>
+<body>
+<div class="box">
+<h1>FINISH THIS</h1>
+<div class="sub">PUZZLE LEVEL 01 // CIPHER</div>
+<div class="term">
+<span class="dim">> decrypt sequence:</span><br>
+<span class="cyan">CODE:</span> <span class="white">8-5-12-12-15 // 23-15-18-12-4</span><br>
+<span class="cyan">TARGET:</span> _ _ _ _ _ // _ _ _ _ _<br>
+<div class="cule" onclick="document.getElementById('hint').style.display='block';this.style.display='none'">[ TAP FOR CULE ]</div>
+<div id="hint" style="display:none;color:#00ff88;font-size:11px;margin-top:12px">CULE: A=1, B=2, C=3...<br>Jawaban = 2 kata paling terkenal di dunia coding</div>
+</div>
+<input id="ans" placeholder="ENTER ANSWER">
+<button onclick="check()">DECRYPT</button>
+<div id="res"></div>
+</div>
+<script>
+function check(){
+let v=document.getElementById('ans').value.toLowerCase().replace(/\s/g,'');
+let r=document.getElementById('res');
+if(v==='helloworld'){r.innerText='> ACCESS GRANTED';r.style.color='#00ff88';setTimeout(()=>alert('BENAR! Jawaban: HELLO WORLD'),300)}
+else{r.innerText='> ACCESS DENIED - TRY AGAIN';r.style.color='#ff3344'}
+}
+</script>
+</body>
+</html>
