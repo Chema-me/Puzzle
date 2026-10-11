@@ -3,46 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FINISH THIS - LEVEL 01</title>
+<title>FINISH THIS</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
-body{margin:0;background:#050507;color:#00ff88;font-family:'JetBrains Mono',monospace;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
-.box{width:100%;max-width:520px;border:1px solid rgba(0,255,136,.3);border-radius:16px;padding:30px;background:rgba(0,255,136,.03);box-shadow:0 0 40px rgba(0,255,136,.15)}
-h1{margin:0;color:#fff;font-size:32px;letter-spacing:6px;text-shadow:0 0 12px #00ff88}
-.sub{font-size:11px;opacity:.5;margin-top:6px;letter-spacing:2px}
-.term{margin-top:24px;background:#000;border-radius:12px;padding:20px;line-height:1.8;border:1px solid #111}
-.cyan{color:#00e5ff}.white{color:#fff}.dim{color:#555}
-input{width:100%;background:#000;border:1px solid #00ff88;color:#00ff88;padding:14px;border-radius:8px;margin-top:18px;text-align:center;letter-spacing:3px;box-sizing:border-box;font-family:inherit}
-button{width:100%;background:#00ff88;color:#000;border:none;padding:14px;border-radius:8px;margin-top:10px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:inherit}
-#res{text-align:center;margin-top:12px;font-size:12px}
+*{box-sizing:border-box}
+body{margin:0;background:#040404;color:#fff;font-family:'JetBrains Mono',monospace;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:12px}
+.wrap{width:100%;max-width:380px;border:1px solid rgba(0,255,136,.35);border-radius:28px;padding:24px 22px 26px;background:#080808;box-shadow:0 0 60px rgba(0,255,136,.18)}
+h1{margin:0;font-size:42px;font-weight:700;line-height:1;letter-spacing:10px;text-shadow:0 0 10px #00ff88, 0 0 25px rgba(0,255,136,.8)}
+.sub{color:#00ff88;opacity:.5;letter-spacing:4px;font-size:10px;margin-top:8px}
+.card{margin-top:20px;background:#000;border-radius:18px;padding:18px 16px;border:1px solid #111}
+.l1{color:#5a5a5a;font-size:13px}
+.l2{margin-top:12px;color:#00d9ff;font-size:14px;letter-spacing:.5px}
+.l2 span{color:#fff}
+.l3{margin-top:4px;color:#00d9ff;font-size:14px}
+.l3 span{color:#5aff8d;letter-spacing:3px}
+.l4{margin-top:14px;color:#00ff88;font-size:11px;line-height:1.7}
+.inp{width:100%;margin-top:18px;background:#000;border:1.6px solid #00ff88;border-radius:14px;padding:15px;color:#00ff88;text-align:center;letter-spacing:4px;font-size:15px;font-family:inherit;outline:none}
+.btn{width:100%;margin-top:11px;background:#00ff88;border:none;border-radius:14px;padding:16px;color:#000;text-align:center;letter-spacing:3px;font-weight:800;font-size:14px;font-family:inherit;box-shadow:0 0 22px rgba(0,255,136,.8);cursor:pointer}
+#r{text-align:center;margin-top:10px;font-size:10px;height:12px}
 </style>
 </head>
 <body>
-<div class="box">
-<h1>FINISH THIS</h1>
+<div class="wrap">
+<h1>FINISH<br>THIS</h1>
 <div class="sub">PUZZLE LEVEL 01 // CIPHER</div>
-<div class="term">
-<span class="dim">> decrypt sequence:</span><br>
-<span class="cyan">CODE:</span> <span class="white">8-5-12-12-15 // 23-15-18-12-4</span><br>
-<span class="cyan">TARGET:</span> _ _ _ _ _ // _ _ _ _ _<br>
-<span style="color:#00ff88;font-size:11px">CLUE: A=1, B=2, C=3...<br>answer = 2 most famous words in the coding world</span>
+<div class="card">
+<div class="l1">> decrypt sequence:</div>
+<div class="l2"><span style="color:#00d9ff">CODE:</span> <span>8-5-12-12-15 // 23-15-18-12-4</span></div>
+<div class="l3">TARGET: <span>_ _ _ _ _ // _ _ _ _ _</span></div>
+<div class="l4">CLUE: A=1, B=2, C=3...<br>answer = 2 most famous words in the coding world</div>
 </div>
-<input id="ans" placeholder="ENTER ANSWER" value=
-<button onclick="check()">DECRYPT</button>
-<div id="res"></div>
+<input id="a" class="inp" placeholder="ENTER ANSWER">
+<button class="btn" onclick="go()">DECRYPT</button>
+<div id="r"></div>
 </div>
 <script>
-function check(){
-let v=document.getElementById('ans').value.toLowerCase().replace(/\s/g,'');
-let r=document.getElementById('res');
-if(v==='helloworld'){
-  r.innerText='> ACCESS GRANTED - REDIRECTING...';
-  r.style.color='#00ff88';
-  setTimeout(()=>{ window.location.href='level2.html'; }, 800);
-} else {
-  r.innerText='> STUPID TRY AGAIN';
-  r.style.color='#ff3344';
-}
+function go(){
+let v=document.getElementById('a').value.toLowerCase().replace(/\s/g,'');
+let r=document.getElementById('r');
+if(v==='helloworld'){r.style.color='#00ff88';r.innerText='> CORRECT - NEXT LEVEL';setTimeout(()=>location.href='level2.html',700)}else{r.style.color='#ff3344';r.innerText='> WRONG CODE'}}
 }
 </script>
 </body>
