@@ -7,20 +7,20 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
 *{box-sizing:border-box}
-body{margin:0;background:#040404;color:#fff;font-family:'JetBrains Mono',monospace;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:12px}
-.wrap{width:100%;max-width:380px;border:1px solid rgba(0,255,136,.35);border-radius:28px;padding:24px 22px 26px;background:#080808;box-shadow:0 0 60px rgba(0,255,136,.18)}
-h1{margin:0;font-size:42px;font-weight:700;line-height:1;letter-spacing:10px;text-shadow:0 0 10px #00ff88, 0 0 25px rgba(0,255,136,.8)}
-.sub{color:#00ff88;opacity:.5;letter-spacing:4px;font-size:10px;margin-top:8px}
-.card{margin-top:20px;background:#000;border-radius:18px;padding:18px 16px;border:1px solid #111}
-.l1{color:#5a5a5a;font-size:13px}
-.l2{margin-top:12px;color:#00d9ff;font-size:14px;letter-spacing:.5px}
-.l2 span{color:#fff}
-.l3{margin-top:4px;color:#00d9ff;font-size:14px}
-.l3 span{color:#5aff8d;letter-spacing:3px}
-.l4{margin-top:14px;color:#00ff88;font-size:11px;line-height:1.7}
-.inp{width:100%;margin-top:18px;background:#000;border:1.6px solid #00ff88;border-radius:14px;padding:15px;color:#00ff88;text-align:center;letter-spacing:4px;font-size:15px;font-family:inherit;outline:none}
-.btn{width:100%;margin-top:11px;background:#00ff88;border:none;border-radius:14px;padding:16px;color:#000;text-align:center;letter-spacing:3px;font-weight:800;font-size:14px;font-family:inherit;box-shadow:0 0 22px rgba(0,255,136,.8);cursor:pointer}
-#r{text-align:center;margin-top:10px;font-size:10px;height:12px}
+body{margin:0;background:#040404;color:#fff;font-family:'JetBrains Mono',monospace;display:flex;justify-content:center;align-items:center;min-height:100vh}
+.wrap{width:100%;max-width:380px;border:1.5px solid rgba(0,255,136,.4);border-radius:30px;padding:28px 22px;background:#080808;box-shadow:0 0 60px rgba(0,255,136,.25)}
+h1{margin:0;font-size:48px;font-weight:800;line-height:.9;letter-spacing:12px;text-shadow:0 0 12px #00ff88, 0 0 35px #00ff88}
+.sub{color:#00ff88;opacity:.45;letter-spacing:5px;font-size:10px;margin-top:10px}
+.card{margin-top:24px;background:#000;border-radius:20px;padding:20px 18px;border:1px solid #141414}
+.l1{color:#555;font-size:13px}
+.l2{margin-top:14px;color:#00d9ff;font-size:14px}
+.l2 b{color:#fff;font-weight:400}
+.l3{margin-top:6px;color:#00d9ff;font-size:14px}
+.l3 span{color:#4ade80;letter-spacing:4px}
+.l4{margin-top:16px;color:#00ff88;font-size:11px;line-height:1.8}
+.inp{width:100%;margin-top:20px;background:transparent;border:1.8px solid #00ff88;border-radius:16px;padding:16px;color:#00ff88;text-align:center;letter-spacing:4px;font-size:15px;font-family:inherit;outline:none}
+.btn{width:100%;margin-top:12px;background:#00ff88;border:none;border-radius:16px;padding:17px;color:#000;text-align:center;letter-spacing:3px;font-weight:900;font-size:14px;font-family:inherit;box-shadow:0 0 28px rgba(0,255,136,.8);cursor:pointer}
+#r{text-align:center;margin-top:10px;font-size:11px;min-height:14px}
 </style>
 </head>
 <body>
@@ -29,7 +29,7 @@ h1{margin:0;font-size:42px;font-weight:700;line-height:1;letter-spacing:10px;tex
 <div class="sub">PUZZLE LEVEL 01 // CIPHER</div>
 <div class="card">
 <div class="l1">> decrypt sequence:</div>
-<div class="l2"><span style="color:#00d9ff">CODE:</span> <span>8-5-12-12-15 // 23-15-18-12-4</span></div>
+<div class="l2">CODE: <b>8-5-12-12-15 // 23-15-18-12-4</b></div>
 <div class="l3">TARGET: <span>_ _ _ _ _ // _ _ _ _ _</span></div>
 <div class="l4">CLUE: A=1, B=2, C=3...<br>answer = 2 most famous words in the coding world</div>
 </div>
@@ -39,9 +39,14 @@ h1{margin:0;font-size:42px;font-weight:700;line-height:1;letter-spacing:10px;tex
 </div>
 <script>
 function go(){
-let v=document.getElementById('a').value.toLowerCase().replace(/\s/g,'');
+let v=document.getElementById('a').value.toLowerCase().trim().replace(/\s+/g,'');
 let r=document.getElementById('r');
-if(v==='helloworld'){r.style.color='#00ff88';r.innerText='> CORRECT - NEXT LEVEL';setTimeout(()=>location.href='level2.html',700)}else{r.style.color='#ff3344';r.innerText='> WRONG CODE'}}
+if(v==='helloworld'){
+r.style.color='#00ff88'; r.innerText='> ACCESS GRANTED...';
+setTimeout(()=>{ location.href='level2.html'; },600);
+}else{
+r.style.color='#ff3344'; r.innerText='> WRONG CODE';
+}
 }
 </script>
 </body>
