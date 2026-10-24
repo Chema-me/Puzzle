@@ -1,104 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FINISH THIS - LEVEL 02</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FINISH THIS</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
-body{margin:0;background:#050507;color:#00ff88;font-family:'JetBrains Mono',monospace;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
-.box{width:100%;max-width:580px;border:1px solid rgba(0,255,136,.3);border-radius:16px;padding:30px;background:rgba(0,255,136,.03);box-shadow:0 0 40px rgba(0,255,136,.15)}
-h1{margin:0;color:#fff;font-size:28px;letter-spacing:5px;text-shadow:0 0 12px #00ff88}
-.sub{font-size:11px;opacity:.5;margin-top:6px;letter-spacing:2px}
-.lock{margin-top:20px;background:#000;border:1px solid #111;border-radius:12px;padding:20px;text-align:center}
-input{width:100%;background:#000;border:1px solid #00ff88;color:#00ff88;padding:12px;border-radius:8px;text-align:center;letter-spacing:3px;box-sizing:border-box;font-family:inherit}
-button{width:100%;background:#00ff88;color:#000;border:none;padding:12px;border-radius:8px;margin-top:10px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:inherit}
-.grid{display:none;grid-template-columns:1fr;gap:12px;margin-top:20px}
-.card{display:block;text-decoration:none;background:#000;border:1px solid rgba(0,255,136,.2);border-radius:10px;padding:14px;color:#00ff88;transition:.2s;cursor:pointer}
-.card:hover{border-color:#00ff88;box-shadow:0 0 15px rgba(0,255,136,.3);transform:translateY(-2px)}
-.card b{color:#fff;display:block;margin-bottom:4px}
-.card span{font-size:11px;opacity:.6;word-break:break-all}
-#status{margin-top:10px;font-size:12px}
-#videoModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:99;justify-content:center;align-items:center;padding:20px}
-#videoModal video{width:100%;max-width:700px;border-radius:12px;border:1px solid #00ff88;box-shadow:0 0 30px rgba(0,255,136,.4)}
-#closeBtn{position:absolute;top:20px;right:20px;background:#00ff88;color:#000;border:none;padding:8px 14px;border-radius:8px;font-weight:700;cursor:pointer}
+body{margin:0;background:#020a06;color:white;font-family:monospace;display:flex;justify-content:center;padding:20px}
+.container{width:100%;max-width:400px;border:1px solid #0aff6a33;border-radius:20px;padding:25px;box-shadow:0 0 30px #0aff6a22;background:#05140b}
+h1{letter-spacing:8px;text-align:center;text-shadow:0 0 10px #0aff6a;font-size:32px;margin:10px 0}
+.sub{color:#0aff6a99;font-size:12px;letter-spacing:2px;text-align:center;margin-bottom:20px}
+.card{background:#000;border:1px solid #0aff6a33;border-radius:15px;padding:15px;margin:15px 0;cursor:pointer;transition:0.2s}
+.card:hover{border-color:#0aff6a;box-shadow:0 0 15px #0aff6a33}
+.card b{font-size:16px;letter-spacing:1px}
+.card span{color:#0aff6a;font-size:12px;display:block;margin-top:5px}
+.gameBox{display:none;margin-top:10px;border-top:1px solid #0aff6a33;padding-top:10px}
+canvas{background:#0a1a10;display:block;margin:10px auto;border:1px solid #0aff6a33;width:100%}
+.hint{color:#888;font-size:11px;text-align:center}
 </style>
 </head>
 <body>
-<div class="box">
+<div class="container">
 <h1>FINISH THIS</h1>
 <div class="sub">LEVEL 02 // ACCESS LINKS - RANDOMIZED SYSTEM</div>
-<div class="lock" id="lockBox">
-<div style="font-size:11px;opacity:.6;margin-bottom:10px">> ENTER LEVEL 01 KEY TO UNLOCK</div>
-<input id="key" placeholder="ENTER KEY">
-<button onclick="unlock()">UNLOCK LINKS</button>
-<div id="status"></div>
-</div>
-<div class="grid" id="grid"></div>
-</div>
 
-<div id="videoModal">
-<button id="closeBtn" onclick="closeClip()">X CLOSE</button>
-<video id="clipPlayer" controls autoplay playsinline loop></video>
+<!-- LINK 5 -->
+<div class="card" onclick="openGame(5)">
+<b>LINK #5 - MIRROR</b><span>https://link-5.com - REVERSE MODE</span>
+<div id="game5" class="gameBox">
+<p class="hint">GUIDE: "victory doesn't have to be forward" - Controls are reversed!</p>
+<canvas id="c5" width="300" height="200"></canvas>
+<p class="hint">Use A/D or ◀▶ - Finish is BEHIND</p>
+</div></div>
+
+<!-- LINK 1 -->
+<div class="card" onclick="openGame(1)">
+<b>LINK #1 - MAIN</b><span>https://link-1.com - MAIN SERVER</span>
+<div id="game1" class="gameBox">
+<p class="hint">GUIDE: "sometimes you must fall to rise"</p>
+<canvas id="c1" width="300" height="200"></canvas>
+</div></div>
+
+<!-- LINK 2 -->
+<div class="card" onclick="openGame(2)">
+<b>LINK #2 - SECRET CLIP [CLIP]</b><span>PLAY INSIDE - AUTO PLAY</span>
+<div id="game2" class="gameBox">
+<p class="hint">GUIDE: "don't take everything that shines"</p>
+<canvas id="c2" width="300" height="200"></canvas>
+</div></div>
+
+<!-- LINK 4 -->
+<div class="card" onclick="openGame(4)">
+<b>LINK #4 - SERVER US</b><span>https://link-4.com - STILLNESS PROTOCOL</span>
+<div id="game4" class="gameBox">
+<p class="hint">GUIDE: "stillness is the key to victory"</p>
+<canvas id="c4" width="300" height="200"></canvas>
+</div></div>
+
+<!-- LINK 3 -->
+<div class="card" onclick="openGame(3)">
+<b>LINK #3 - SERVER EU</b><span>https://link-3.com - FAKE WALL</span>
+<div id="game3" class="gameBox">
+<p class="hint">GUIDE: "what you see is a lie"</p>
+<canvas id="c3" width="300" height="200"></canvas>
+</div></div>
+
 </div>
 
 <script>
-const LINKS = [
-  { title: "LINK #1 - MAIN", url: "https://link-1.com", type: "link" },
-  { title: "LINK #2 - SECRET CLIP", url: "clip.mp4", type: "clip" },
-  { title: "LINK #3 - SERVER EU", url: "https://link-3.com", type: "link" },
-  { title: "LINK #4 - SERVER US", url: "https://link-4.com", type: "link" },
-  { title: "LINK #5 - MIRROR", url: "https://link-5.com", type: "link" }
-];
-
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-shuffle(LINKS);
-
-function unlock(){
-  let v=document.getElementById('key').value.toLowerCase().replace(/\s/g,'');
-  let s=document.getElementById('status');
-  if(v==='helloworld'){
-    document.getElementById('lockBox').style.display='none';
-    render();
-  } else {
-    s.innerText='> WRONG KEY';
-    s.style.color='#ff3344';
-  }
+function openGame(n){
+  document.querySelectorAll('.gameBox').forEach(e=>{if(e.id!='game'+n) e.style.display='none'});
+  const el=document.getElementById('game'+n);
+  el.style.display = el.style.display=='block' ? 'none' : 'block';
+  if(el.style.display=='block') startGame(n);
 }
-
-function render(){
-  let g=document.getElementById('grid');
-  g.style.display='grid';
-  g.innerHTML='';
-  LINKS.forEach(link=>{
-    let a=document.createElement('a');
-    a.className='card';
-    if(link.type==='clip'){
-      a.href='javascript:void(0)';
-      a.onclick=()=>openClip(link.url);
-      a.innerHTML=`<b>${link.title} [CLIP]</b><span>PLAY INSIDE - AUTO PLAY</span>`;
+let active={};
+function startGame(n){
+  if(active[n]) return; active[n]=true;
+  const canvas=document.getElementById('c'+n); const ctx=canvas.getContext('2d');
+  let p={x:20,y:150,w:15,h:15,vy:0}, keys={}, t=0;
+  let coins=[{x:150,y:100}], goal={x:10,y:150};
+  function loop(){
+    if(document.getElementById('game'+n).style.display=='none') return;
+    ctx.clearRect(0,0,300,200);
+    // DRAW GOAL
+    ctx.fillStyle='#0aff6a'; ctx.fillRect(goal.x,goal.y,20,30);
+    // CONTROLS
+    if(n==5){ // REVERSE
+      if(keys.ArrowLeft||keys.a) p.x+=3; if(keys.ArrowRight||keys.d) p.x-=3;
+      goal={x:10,y:150}; // behind
+      if(keys.ArrowUp||keys.w) p.y-=3; if(keys.ArrowDown||keys.s) p.y+=3;
     } else {
-      a.href=link.url;
-      a.target='_blank';
-      a.innerHTML=`<b>${link.title}</b><span>${link.url}</span>`;
+      if(keys.ArrowLeft||keys.a) p.x-=3; if(keys.ArrowRight||keys.d) p.x+=3;
+      if(keys.ArrowUp||keys.w) p.y-=3; if(keys.ArrowDown||keys.s) p.y+=3;
     }
-    g.appendChild(a);
-  });
-}
-
-function openClip(src){
-  let modal=document.getElementById('videoModal');
-  let player=document.getElementById('clipPlayer');
-  player.src=src;
-  modal.style.display='flex';
-  player.play();
-}
-function closeClip(){
-  let modal=document.getElementById('videoModal');
-  let player=document.getElementById('clipPlayer');
-  modal.style.display='none';
-  player.pause();
-  player.src='';
+    // LEVEL LOGIC
+    if(n==1){ goal={x:10,y:20}; ctx.fillStyle='red'; ctx.fillRect(250,150,20,30); // fake
+      if(p.x>240&&p.y>140) {p.x=20; alert('FAKE FINISH! Go BEHIND!');}
+    }
+    if(n==2){ ctx.fillStyle='gold'; coins.forEach(c=>{ctx.fillRect(c.x,c.y,10,10); if(Math.abs(p.x-c.x)<15&&Math.abs(p.y-c.y)<15){alert('GREEDY! You lose!'); p.x=20}}); goal={x:250,y:20}; }
+    if(n==4){ // stillness
+      if(Math.abs(p.x-140)<5 && Math.abs(p.y-80)<5 && !keys.ArrowLeft && !keys.ArrowRight && !keys.a && !keys.d){ t+=0.02; ctx.fillText('STILL: '+t.toFixed(1)+'s',100,10); if(t>3){alert('WIN! Stillness wins!'); return;} } else t=0;
+      ctx.strokeStyle='#333'; ctx.strokeRect(130,70,40,40);
+    }
+    if(n==3){ // fake wall
+      ctx.fillStyle='#333'; ctx.fillRect(150,0,10,180); // fake wall is actually passable if y>100
+      if(p.x>140&&p.x<160&&p.y<100) p.x=130;
+      goal={x:270,y:20};
+    }
+    ctx.fillStyle='white'; ctx.fillRect(p.x,p.y,p.w,p.h);
+    if(p.x>goal.x-10&&p.x<goal.x+20&&p.y>goal.y-10&&p.y<goal.y+30){ alert('LINK #'+n+' CLEARED!'); document.getElementById('game'+n).style.display='none'; }
+    requestAnimationFrame(loop);
+  }
+  window.addEventListener('keydown',e=>keys[e.key]=true); window.addEventListener('keyup',e=>keys[e.key]=false);
+  loop();
 }
 </script>
 </body>
