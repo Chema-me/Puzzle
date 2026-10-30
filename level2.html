@@ -1,4 +1,4 @@
-<!-- LEVEL 02 FINAL - DESIGN ASLI + SYSTEM FIX WAJIB 5 -->
+<!-- LEVEL 02 FINAL - THREE RITUALS - FULL VERSION - FIX SYSTEM ONLY -->
 <div id="level02" style="max-width:600px;margin:auto">
 <div class="card" style="background:#050505;border:1px solid #222;padding:15px">
 <b style="letter-spacing:3px">LEVEL 02 // THREE RITUALS</b>
@@ -12,7 +12,11 @@
 </div>
 
 <script>
-let audioCtx;
+const grid=document.getElementById('grid02');
+const stageText=document.getElementById('stageText');
+const win=document.getElementById('win02');
+let stage=1; let audioCtx;
+
 function startCreepyAudio(){
   try{
     audioCtx=new (window.AudioContext||window.webkitAudioContext)();
@@ -24,21 +28,17 @@ function startCreepyAudio(){
 }
 document.body.addEventListener('click',()=>{ if(!audioCtx) startCreepyAudio(); },{once:true});
 
-const grid=document.getElementById('grid02');
-const stageText=document.getElementById('stageText');
-const win=document.getElementById('win02');
-
 function loadStage(s){
   grid.innerHTML=''; grid.style.display='grid';
-  if(s===1) spawnTVs();
-  if(s===2) spawnDoors();
-  if(s===3) spawnSmiles();
+  if(s===1){ stageText.innerText='STAGE 1/3: THE FACES IN THE STATIC - Click the face when it appears'; spawnTVs(); }
+  if(s===2){ stageText.innerText='STAGE 2/3: HOLD THE DOOR - Something wants in. Hold it!'; spawnDoors(); }
+  if(s===3){ stageText.innerText='STAGE 3/3: SMILE - Click fast before it rips'; spawnSmiles(); }
   if(s===4){ grid.style.display='none'; win.style.display='block'; stageText.innerText='RITUAL COMPLETE'; setTimeout(()=>{ window.location.href='#HARDEST'; },2500); }
 }
 
+// STAGE 1 - TV STATIC - FIX: wajib 5
 function spawnTVs(){
   let cleared=0;
-  stageText.innerText=`STAGE 1/3: THE FACES IN THE STATIC - ${cleared}/5`;
   for(let i=0;i<5;i++){
     let box=document.createElement('div');
     box.style.cssText='background:#000;height:130px;position:relative;overflow:hidden;border:1px solid #222;cursor:crosshair';
@@ -47,22 +47,14 @@ function spawnTVs(){
     let noise=setInterval(()=>{ if(!alive) return; let img=ctx.createImageData(200,130); for(let j=0;j<img.data.length;j+=4){ let v=Math.random()*255; img.data[j]=v; img.data[j+1]=v; img.data[j+2]=v; img.data[j+3]=255; } ctx.putImageData(img,0,0); },40);
     let faces=['ʘ_ʘ','ಠ_ಠ','☻','◉_◉','⚆_⚆'];
     let show=setInterval(()=>{ if(!alive) return; if(Math.random()<0.22){ let f=box.querySelector('.face'); f.innerText=faces[Math.floor(Math.random()*faces.length)]; f.style.opacity='1'; setTimeout(()=>f.style.opacity='0',380); } },550);
-    box.onclick=()=>{
-      let f=box.querySelector('.face');
-      if(f.style.opacity==='1' && alive){
-        alive=false; clearInterval(noise); clearInterval(show);
-        box.style.transform='scale(0) rotate(5deg)'; box.style.filter='blur(5px)';
-        cleared++; stageText.innerText=`STAGE 1/3: THE FACES IN THE STATIC - ${cleared}/5`;
-        setTimeout(()=>{ box.remove(); if(cleared>=5) loadStage(2); },350);
-      }
-    };
+    box.onclick=()=>{ if(box.querySelector('.face').style.opacity==='1' && alive){ alive=false; clearInterval(noise); clearInterval(show); box.style.transform='scale(0) rotate(5deg)'; box.style.filter='blur(5px)'; cleared++; setTimeout(()=>{ box.remove(); if(cleared>=5){ stage=2; loadStage(stage); } },350); } };
     grid.appendChild(box);
   }
 }
 
+// STAGE 2 - HOLD THE DOOR - FIX: wajib 5
 function spawnDoors(){
   let cleared=0;
-  stageText.innerText=`STAGE 2/3: HOLD THE DOOR - ${cleared}/5`;
   for(let i=0;i<5;i++){
     let box=document.createElement('div');
     box.style.cssText='background:#0a0a0a;height:130px;border:1px solid #331111;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;';
@@ -72,7 +64,7 @@ function spawnDoors(){
       if(!alive) return;
       if(hold){ pct+=3.5; shake=0; box.querySelector('.door').style.transform='scale(1.1)'; } else { pct=Math.max(0,pct-2); shake+=0.6; box.style.transform=`translateX(${Math.sin(shake)*4}px)`; if(pct>30) box.querySelector('.eyeDoor').style.opacity='1'; else box.querySelector('.eyeDoor').style.opacity='0'; }
       box.querySelector('.bar').style.width=pct+'%';
-      if(pct>=100 && alive){ alive=false; clearInterval(t); box.style.transform='scale(0)'; cleared++; stageText.innerText=`STAGE 2/3: HOLD THE DOOR - ${cleared}/5`; setTimeout(()=>{ box.remove(); if(cleared>=5) loadStage(3); },300); }
+      if(pct>=100 && alive){ alive=false; clearInterval(t); box.style.transform='scale(0)'; cleared++; setTimeout(()=>{ box.remove(); if(cleared>=5){ stage=3; loadStage(stage); } },300); }
     },40);
     box.onmousedown=box.ontouchstart=()=>hold=true;
     box.onmouseup=box.ontouchend=box.onmouseleave=()=>hold=false;
@@ -80,9 +72,9 @@ function spawnDoors(){
   }
 }
 
+// STAGE 3 - SMILE ROBEK - FIX: wajib 5
 function spawnSmiles(){
   let cleared=0;
-  stageText.innerText=`STAGE 3/3: SMILE - ${cleared}/5`;
   for(let i=0;i<5;i++){
     let box=document.createElement('div');
     box.style.cssText='background:#000;height:130px;border:1px solid #222;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;overflow:hidden';
@@ -95,7 +87,7 @@ function spawnSmiles(){
       <div style="position:absolute;bottom:0;left:0;height:3px;background:#ff0000;width:0%" class="bar"></div>
     `;
     let mouth=box.querySelector('.mouth'); let eyes=box.querySelector('.eyes'); let blood=box.querySelector('.blood'); let face=box.querySelector('.scaryFace');
-    let width=18,height=6,stageSmile=0,clicks=0,alive=true;
+    let width=18, height=6, stageSmile=0, clicks=0, alive=true;
     let t=setInterval(()=>{
       if(!alive) return;
       width+=0.45; height+=0.18;
@@ -110,11 +102,15 @@ function spawnSmiles(){
       clicks++; width=Math.max(18,width-28); height=Math.max(6,height-9);
       box.querySelector('.bar').style.width=(clicks*10)+'%';
       face.style.transform='scale(0.85)'; setTimeout(()=>face.style.transform='scale(1)',80);
-      if(clicks>=10){ alive=false; clearInterval(t); mouth.style.background='#000'; mouth.innerHTML=''; blood.innerText='X_X DEAD'; blood.style.color='#555'; box.style.transform='scale(0) rotate(720deg)'; box.style.filter='blur(8px)'; cleared++; stageText.innerText=`STAGE 3/3: SMILE - ${cleared}/5`; setTimeout(()=>{ box.remove(); if(cleared>=5) loadStage(4); },400); }
+      if(clicks>=10 && alive){
+        alive=false; clearInterval(t); mouth.style.background='#000'; mouth.innerHTML=''; blood.innerText='X_X DEAD'; blood.style.color='#555';
+        box.style.transform='scale(0) rotate(720deg)'; box.style.filter='blur(8px)';
+        cleared++; setTimeout(()=>{ box.remove(); if(cleared>=5){ stage=4; loadStage(stage); } },400);
+      }
     };
     grid.appendChild(box);
   }
 }
 
 loadStage(1);
-      </script>
+        </script>
