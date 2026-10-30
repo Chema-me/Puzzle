@@ -1,51 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style>
+html,body{margin:0;padding:0;background:#000;overflow:hidden;height:100%;width:100%;touch-action:none}
+#level02{height:100dvh;width:100vw;display:flex;flex-direction:column}
+.header{padding:8px 10px;color:#fff;font-family:monospace;font-size:11px;letter-spacing:1px;background:#000;flex-shrink:0}
+#grid02{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr 1fr;gap:2px;flex:1;width:100%;height:100%;background:#000}
+.tv{background:#000;position:relative;overflow:hidden;cursor:crosshair;border:1px solid #111}
+.tv canvas{width:100%;height:100%;display:block}
+.face{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:42px;opacity:0;color:#fff;font-family:monospace;transition:0.05s;pointer-events:none;text-shadow:0 0 10px #fff}
+.tv.dead{transform:scale(0);opacity:0;filter:blur(20px);transition:0.5s}
+#win02{position:fixed;inset:0;background:#000;color:#fff;display:none;align-items:center;justify-content:center;z-index:99;font-family:monospace;font-size:20px;letter-spacing:5px;text-align:center}
+</style>
+</head>
+<body>
 <div id="level02">
-<b>LEVEL 02 // TURN THEM OFF</b>
-<div style="font-size:11px;opacity:0.6;margin:6px 0">5 SCREENS. 5 FACES. CLICK THEM BEFORE THEY STARE BACK.</div>
-<div id="grid02" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
-<div id="win02" style="display:none;text-align:center;padding:60px 0;letter-spacing:4px">You have completed the beginning</div>
+<div class="header"><b>LEVEL 02 // TURN THEM OFF</b> - 5 SCREENS. 5 FACES. CLICK THEM BEFORE THEY STARE BACK.</div>
+<div id="grid02"></div>
+<div id="win02">You have completed the beginning</div>
 </div>
 
 <script>
+let audioCtx, humOsc1, humOsc2, gainNode;
+let soundOn=false;
+function startHum(){
+ if(soundOn) return; soundOn=true;
+ audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+ gainNode=audioCtx.createGain(); gainNode.gain.value=0; gainNode.connect(audioCtx.destination);
+ humOsc1=audioCtx.createOscillator(); humOsc1.frequency.value=60; humOsc1.type='sawtooth'; humOsc1.connect(gainNode); humOsc1.start();
+ humOsc2=audioCtx.createOscillator(); humOsc2.frequency.value=120; humOsc2.type='sine'; humOsc2.connect(gainNode); humOsc2.start();
+ gainNode.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime+2);
+}
+
 const grid=document.getElementById('grid02');
 const win=document.getElementById('win02');
 let left=5;
 
 for(let i=0;i<5;i++){
-  let box=document.createElement('div');
-  box.style.cssText='background:#000;height:130px;position:relative;overflow:hidden;border:1px solid #222;cursor:crosshair';
-  box.innerHTML='<canvas style="width:100%;height:100%"></canvas><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:30px;opacity:0;transition:0.1s" class="face">:)</div>';
-  let canvas=box.querySelector('canvas'); let ctx=canvas.getContext('2d');
-  canvas.width=200; canvas.height=130;
-  let alive=true, faceTimer=0;
+ let box=document.createElement('div'); box.className='tv';
+ box.innerHTML='<canvas></canvas><div class="face"></div>';
+ let canvas=box.querySelector('canvas'); let ctx=canvas.getContext('2d');
+ canvas.width=300; canvas.height=200;
+ let alive=true;
+ let loop=setInterval(()=>{
+   if(!alive) return;
+   let img=ctx.createImageData(300,200);
+   for(let j=0;j<img.data.length;j+=4){ let v=Math.random()*255; img.data[j]=v; img.data[j+1]=v; img.data[j+2]=v; img.data[j+3]=255; }
+   ctx.putImageData(img,0,0);
+ },40);
 
-  // static noise
-  setInterval(()=>{ if(!alive) return;
-    let img=ctx.createImageData(200,130);
-    for(let j=0;j<img.data.length;j+=4){ let v=Math.random()*255; img.data[j]=v; img.data[j+1]=v; img.data[j+2]=v; img.data[j+3]=255; }
-    ctx.putImageData(img,0,0);
-  },50);
+ let faceLoop=setInterval(()=>{
+   if(!alive) return;
+   if(Math.random()<0.12){
+     let f=box.querySelector('.face');
+     f.innerText=['ʘ_ʘ','ಠ_ಠ','◉_◉','⚆_⚆','☻'][Math.floor(Math.random()*5)];
+     f.style.opacity='1';
+     // dengung keras pas muka muncul
+     if(gainNode) gainNode.gain.linearRampToValueAtTime(0.4, audioCtx.currentTime+0.05);
+     setTimeout(()=>{ f.style.opacity='0'; if(gainNode) gainNode.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime+0.2); },350);
+   }
+ },700);
 
-  // munculin muka random
-  setInterval(()=>{ if(!alive) return;
-    if(Math.random()<0.15){ 
-      let f=box.querySelector('.face'); 
-      f.innerText=['ʘ_ʘ','ಠ_ಠ','☻','◉_◉','⚆_⚆'][Math.floor(Math.random()*5)];
-      f.style.opacity='1'; f.style.color='#fff';
-      setTimeout(()=>f.style.opacity='0',400);
-    }
-  },600);
-
-  box.onclick=()=>{
-    let f=box.querySelector('.face');
-    if(f.style.opacity==='1'){ // kena!
-      alive=false;
-      box.style.transition='0.4s'; box.style.transform='scale(0) rotate(10deg)'; box.style.filter='blur(10px)';
-      left--;
-      setTimeout(()=>{ box.remove(); if(left<=0){ win.style.display='block'; grid.style.display='none';
-        setTimeout(()=>location.href='#HARDEST',2000);
-      }},400);
-    }
-  };
-  grid.appendChild(box);
+ box.addEventListener('click',()=>{
+   startHum(); // suara mulai pas klik pertama
+   let f=box.querySelector('.face');
+   if(f.style.opacity==='1'){
+     alive=false; clearInterval(loop); clearInterval(faceLoop);
+     // suara pecah
+     if(audioCtx){ gainNode.gain.linearRampToValueAtTime(0.6, audioCtx.currentTime+0.05); setTimeout(()=>gainNode.gain.linearRampToValueAtTime(left===1?0:0.15, audioCtx.currentTime+0.3),200); }
+     box.classList.add('dead');
+     left--; setTimeout(()=>{ box.remove(); if(left<=0) winFunc(); },500);
+   }
+ });
+ grid.appendChild(box);
 }
+
+function winFunc(){
+ win.style.display='flex';
+ if(gainNode) gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime+1.5);
+ setTimeout(()=>{ window.location.href='#HARDEST'; },3000);
+}
+// auto start hum on first touch anywhere
+document.body.addEventListener('touchstart',startHum,{once:true});
+document.body.addEventListener('click',startHum,{once:true});
 </script>
+</body>
+</html>
