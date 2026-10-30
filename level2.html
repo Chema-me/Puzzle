@@ -1,98 +1,78 @@
-<!-- LEVEL 02 FINAL - 3 STAGE -->
-<div id="level02">
-<b>LEVEL 02 // THREE RITUALS</b>
-<div id="stageText" style="font-size:11px;opacity:0.6;margin:8px 0">STAGE 1/3: TURN THEM OFF - Click the faces in the static</div>
-<div id="grid02" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
-<div id="win02" style="display:none;text-align:center;padding:60px 0;letter-spacing:4px;line-height:25px">You have completed the beginning<br><span style="font-size:11px;opacity:0.5">The hardest begins now...</span></div>
-<audio id="bgAudio" loop>
-  <source src="https://commondatastorage.googleapis.com/codeskulptor-assets/week7-bounce.m4a" type="audio/mpeg">
-</audio>
+<!-- DESIGN AWAL FAVORIT - LAYAR BESAR + SUARA - FIX 5 -->
+<div id="level02" style="max-width:700px;margin:auto">
+<div class="card" style="background:#050505;border:1px solid #222;padding:20px">
+<b style="letter-spacing:4px;font-size:14px">LEVEL 02 // THE FACES IN THE STATIC</b>
+<div id="stageText" style="font-size:11px;opacity:0.6;margin:10px 0;letter-spacing:1px">TURN THEM OFF - 0/5</div>
+<div id="grid02" style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:15px"></div>
+<div id="win02" style="display:none;text-align:center;padding:100px 0">
+<div style="font-size:24px;letter-spacing:6px;color:#fff">You have completed the beginning</div>
+<div style="font-size:11px;opacity:0.4;margin-top:12px;letter-spacing:2px">The hardest begins now...</div>
+</div>
+</div>
 </div>
 
 <script>
 const grid=document.getElementById('grid02');
 const stageText=document.getElementById('stageText');
 const win=document.getElementById('win02');
-const bgAudio=document.getElementById('bgAudio');
-
-let stage=1;
-let left=0;
-
-// SUARA BACKGROUND SEREM
 let audioCtx;
+
 function startCreepyAudio(){
   try{
     audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-    let osc=audioCtx.createOscillator();
-    let gain=audioCtx.createGain();
-    let filter=audioCtx.createBiquadFilter();
-    osc.type='sawtooth'; osc.frequency.value=45;
-    filter.type='lowpass'; filter.frequency.value=400;
-    gain.gain.value=0.04;
-    osc.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
-    osc.start();
-    // static layer
-    setInterval(()=>{ if(!audioCtx) return; let o=audioCtx.createOscillator(); o.frequency.value=1000+Math.random()*2000; let g=audioCtx.createGain(); g.gain.value=0.02; o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.1); },800);
+    let osc=audioCtx.createOscillator(); let gain=audioCtx.createGain(); let filter=audioCtx.createBiquadFilter();
+    osc.type='sawtooth'; osc.frequency.value=42; filter.type='lowpass'; filter.frequency.value=350; gain.gain.value=0.06;
+    osc.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination); osc.start();
+    setInterval(()=>{ if(!audioCtx) return; let o=audioCtx.createOscillator(); let g=audioCtx.createGain(); o.frequency.value=1000+Math.random()*2500; g.gain.value=0.03; o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.15); },600);
   }catch(e){}
 }
-document.body.addEventListener('click',()=>{ if(!audioCtx) startCreepyAudio(); bgAudio.play().catch(()=>{}); },{once:true});
+document.body.addEventListener('click',()=>{ if(!audioCtx) startCreepyAudio(); },{once:true});
 
-function loadStage(s){
-  grid.innerHTML=''; 
-  if(s===1){ stageText.innerText='STAGE 1/3: THE FACES IN THE STATIC - Click fast!'; spawnTVs(); }
-  if(s===2){ stageText.innerText='STAGE 2/3: HOLD THE DOOR - Hold the doors!'; spawnDoors(); }
-  if(s===3){ stageText.innerText='STAGE 3/3: SMILE - Stop them smiling!'; spawnSmiles(); }
-  if(s===4){ grid.style.display='none'; win.style.display='block'; stageText.style.display='none'; setTimeout(()=>location.href='#HARDEST',2500); }
-}
-
-function spawnTVs(){
-  left=5;
+function loadStage(){
+  let cleared=0;
+  stageText.innerText=`TURN THEM OFF - ${cleared}/5`;
   for(let i=0;i<5;i++){
     let box=document.createElement('div');
-    box.style.cssText='background:#000;height:130px;position:relative;overflow:hidden;border:1px solid #222;cursor:crosshair';
-    box.innerHTML='<canvas style="width:100%;height:100%"></canvas><div class="face" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:32px;opacity:0">ʘ_ʘ</div>';
-    let canvas=box.querySelector('canvas'); let ctx=canvas.getContext('2d'); canvas.width=200; canvas.height=130;
-    let alive=true;
-    let noise=setInterval(()=>{ if(!alive) return; let img=ctx.createImageData(200,130); for(let j=0;j<img.data.length;j+=4){ let v=Math.random()*255; img.data[j]=v; img.data[j+1]=v; img.data[j+2]=v; img.data[j+3]=255; } ctx.putImageData(img,0,0); },40);
-    let faces=['ʘ_ʘ','ಠ_ಠ','☻','◉_◉']; 
-    let show=setInterval(()=>{ if(!alive) return; if(Math.random()<0.2){ let f=box.querySelector('.face'); f.innerText=faces[Math.floor(Math.random()*faces.length)]; f.style.opacity='1'; setTimeout(()=>f.style.opacity='0',350); } },500);
-    box.onclick=()=>{ if(box.querySelector('.face').style.opacity==='1'){ alive=false; clearInterval(noise); clearInterval(show); box.style.transform='scale(0)'; setTimeout(()=>{ box.remove(); left--; if(left<=0){ stage=2; loadStage(stage); } },300); } };
-    grid.appendChild(box);
-  }
-}
-
-function spawnDoors(){
-  left=5;
-  for(let i=0;i<5;i++){
-    let box=document.createElement('div');
-    box.style.cssText='background:#0a0a0a;height:130px;border:1px solid #331111;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;';
-    box.innerHTML='<div style="font-size:40px" class="door">🚪</div><div style="position:absolute;bottom:0;left:0;height:4px;background:#ff0000;width:0%" class="bar"></div>';
-    let hold=false,pct=0,shake=0;
-    let t=setInterval(()=>{
-      if(hold){ pct+=4; shake=0; } else { pct=Math.max(0,pct-2); shake+=0.5; box.style.transform=`translateX(${Math.sin(shake)*3}px)`; }
-      box.querySelector('.bar').style.width=pct+'%';
-      if(pct>=100){ clearInterval(t); box.style.transform='scale(0)'; setTimeout(()=>{ box.remove(); left--; if(left<=0){ stage=3; loadStage(stage); } },300); }
-    },40);
-    box.onmousedown=box.ontouchstart=()=>hold=true;
-    box.onmouseup=box.ontouchend=box.onmouseleave=()=>hold=false;
-    grid.appendChild(box);
-  }
-}
-
-function spawnSmiles(){
-  left=5;
-  for(let i=0;i<5;i++){
-    let box=document.createElement('div');
-    box.style.cssText='background:#000;height:130px;border:1px solid #222;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;';
-    box.innerHTML='<div style="font-size:40px;transition:0.3s" class="smile">:)</div>';
-    let size=40, growing=true;
-    let t=setInterval(()=>{ if(growing){ size+=0.3; if(size>70){ box.querySelector('.smile').innerText=':D'; box.querySelector('.smile').style.color='#ff0000'; } if(size>85) size=85; } box.querySelector('.smile').style.fontSize=size+'px'; },50);
-    box.onclick=()=>{
-      size-=15; if(size<=20){ clearInterval(t); box.style.transform='scale(0) rotate(180deg)'; setTimeout(()=>{ box.remove(); left--; if(left<=0){ stage=4; loadStage(stage); } },300); }
+    box.style.cssText='background:#000;height:180px;position:relative;overflow:hidden;border:1px solid #222;cursor:crosshair;transition:0.3s';
+    box.innerHTML='<canvas style="width:100%;height:100%"></canvas><div class="face" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:42px;opacity:0;transition:0.1s;font-weight:bold">ʘ_ʘ</div>';
+    
+    let canvas=box.querySelector('canvas'); let ctx=canvas.getContext('2d'); canvas.width=300; canvas.height=180; let alive=true;
+    
+    let noise=setInterval(()=>{ 
+      if(!alive) return; 
+      let img=ctx.createImageData(300,180); 
+      for(let j=0;j<img.data.length;j+=4){ let v=Math.random()*255; img.data[j]=v; img.data[j+1]=v; img.data[j+2]=v; img.data[j+3]=255; } 
+      ctx.putImageData(img,0,0); 
+    },35);
+    
+    let faces=['ʘ_ʘ','ಠ_ಠ','☻','◉_◉','⚆_⚆','⍜_⍜'];
+    let show=setInterval(()=>{ 
+      if(!alive) return; 
+      if(Math.random()<0.25){ 
+        let f=box.querySelector('.face'); 
+        f.innerText=faces[Math.floor(Math.random()*faces.length)]; 
+        f.style.opacity='1'; 
+        box.style.borderColor='#fff';
+        box.style.boxShadow='0 0 15px rgba(255,255,255,0.2)';
+        setTimeout(()=>{ f.style.opacity='0'; box.style.borderColor='#222'; box.style.boxShadow='none'; },500); 
+      } 
+    },700);
+    
+    box.onclick=()=>{ 
+      let f=box.querySelector('.face');
+      if(f.style.opacity==='1' && alive){ 
+        alive=false; clearInterval(noise); clearInterval(show); 
+        box.style.transform='scale(0) rotate(5deg)'; box.style.filter='blur(6px)'; 
+        cleared++; stageText.innerText=`TURN THEM OFF - ${cleared}/5`;
+        setTimeout(()=>{ 
+          box.remove(); 
+          if(cleared>=5){ grid.style.display='none'; win.style.display='block'; stageText.innerText='COMPLETE'; setTimeout(()=>location.href='#HARDEST',2500); } 
+        },400); 
+      } 
     };
     grid.appendChild(box);
   }
 }
 
-loadStage(1);
+loadStage();
       </script>
