@@ -1,21 +1,21 @@
-<!-- DESIGN AWAL FULLSCREEN + LORE - 100% ASLI -->
+<!-- FINAL FULLSCREEN 3 STAGE - AUDIO FROM START -->
 <style>
-  body{ margin:0; background:#000; color:#fff; font-family:monospace; }
-  #level02{ width:100vw; min-height:100vh; padding:0; box-sizing:border-box; }
-  .header{ padding:25px 20px 10px; border-bottom:1px solid #222; }
-  .lore{ font-size:10px; opacity:0.5; letter-spacing:2px; margin-top:8px; font-style:italic; }
+  body{ margin:0; background:#000; color:#fff; font-family:monospace; overflow-x:hidden; }
+  #level02{ width:100vw; min-height:100vh; }
+  .header{ padding:28px 20px 15px; border-bottom:1px solid #222; position:sticky; top:0; background:#000; z-index:10; }
+  .lore{ font-size:11px; opacity:0.6; letter-spacing:2px; margin-top:10px; font-style:italic; }
   #grid02{ display:grid; grid-template-columns:1fr 1fr; gap:0; width:100%; }
-  .tv-box{ background:#000; height:33vh; min-height:200px; position:relative; overflow:hidden; border:0.5px solid #111; cursor:crosshair; transition:0.3s; }
+  .box{ height:35vh; min-height:220px; position:relative; overflow:hidden; border:0.5px solid #111; cursor:pointer; background:#000; transition:0.3s; display:flex; align-items:center; justify-content:center; }
 </style>
 
 <div id="level02">
   <div class="header">
-    <b style="letter-spacing:6px; font-size:13px">LEVEL 02 // THE FACES IN THE STATIC</b>
-    <div id="stageText" class="lore">The eyes look at you - Turn them off - 0/5</div>
+    <b style="letter-spacing:7px; font-size:13px" id="levelTitle">LEVEL 02 // THE FACES IN THE STATIC</b>
+    <div id="stageText" class="lore">The eyes look at you - 0/5 turned off - click anywhere to enable audio</div>
   </div>
   <div id="grid02"></div>
-  <div id="win02" style="display:none;text-align:center;padding:150px 20px">
-    <div style="font-size:28px;letter-spacing:8px">You have completed the beginning</div>
+  <div id="win02" style="display:none;text-align:center;padding:180px 20px">
+    <div style="font-size:30px;letter-spacing:8px">You have completed the beginning</div>
     <div style="font-size:11px;opacity:0.4;margin-top:15px;letter-spacing:3px">The hardest begins now...</div>
   </div>
 </div>
@@ -24,63 +24,81 @@
 const grid=document.getElementById('grid02');
 const stageText=document.getElementById('stageText');
 const win=document.getElementById('win02');
-let audioCtx;
+let audioCtx; let audioStarted=false;
 
 function startCreepyAudio(){
+  if(audioStarted) return; audioStarted=true;
   try{
     audioCtx=new (window.AudioContext||window.webkitAudioContext)();
     let osc=audioCtx.createOscillator(),gain=audioCtx.createGain(),filter=audioCtx.createBiquadFilter();
-    osc.type='sawtooth'; osc.frequency.value=40; filter.type='lowpass'; filter.frequency.value=300; gain.gain.value=0.07;
+    osc.type='sawtooth'; osc.frequency.value=38; filter.type='lowpass'; filter.frequency.value=280; gain.gain.value=0.08;
     osc.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination); osc.start();
-    setInterval(()=>{ if(!audioCtx) return; let o=audioCtx.createOscillator(),g=audioCtx.createGain(); o.frequency.value=900+Math.random()*3000; g.gain.value=0.035; o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.18); },500);
+    setInterval(()=>{ if(!audioCtx) return; let o=audioCtx.createOscillator(),g=audioCtx.createGain(); o.frequency.value=800+Math.random()*3500; g.gain.value=0.04; o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.2); },450);
   }catch(e){}
 }
-document.body.addEventListener('click',()=>{ if(!audioCtx) startCreepyAudio(); },{once:true});
 
-let cleared=0;
-const lores=["The eyes look at you","They are watching through the static","Don't let them see you","Turn them off before they find you","You are not alone in the signal"];
+// AUDIO LANGSUNG DI AWAL
+document.body.addEventListener('click',()=>{ startCreepyAudio(); },{once:true});
+window.addEventListener('load',()=>{ setTimeout(()=>{ try{ startCreepyAudio(); }catch(e){} },100); });
 
-for(let i=0;i<5;i++){
-  let box=document.createElement('div');
-  box.className='tv-box';
-  box.innerHTML='<canvas style="width:100%;height:100%"></canvas><div class="face" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:54px;opacity:0;transition:0.08s">ʘ_ʘ</div><div class="label" style="position:absolute;bottom:8px;left:10px;font-size:8px;opacity:0.3;letter-spacing:2px">CAM 0'+(i+1)+' // NO SIGNAL</div>';
-  
-  let canvas=box.querySelector('canvas'); let ctx=canvas.getContext('2d'); canvas.width=400; canvas.height=300; let alive=true;
-  
-  let noise=setInterval(()=>{ if(!alive) return; let img=ctx.createImageData(400,300); for(let j=0;j<img.data.length;j+=4){ let v=Math.random()*255; img.data[j]=v; img.data[j+1]=v; img.data[j+2]=v; img.data[j+3]=255; } ctx.putImageData(img,0,0); },30);
-  
-  let faces=['ʘ_ʘ','ಠ_ಠ','☻','◉_◉','⚆_⚆','⍜_⍜','◐_◑'];
-  let show=setInterval(()=>{ 
-    if(!alive) return; 
-    if(Math.random()<0.28){ 
-      let f=box.querySelector('.face'); 
-      f.innerText=faces[Math.floor(Math.random()*faces.length)]; 
-      f.style.opacity='1'; 
-      box.style.background='#0a0a0a';
-      stageText.innerText=lores[Math.floor(Math.random()*lores.length)]+' - '+cleared+'/5';
-      setTimeout(()=>{ f.style.opacity='0'; box.style.background='#000'; },550); 
-    } 
-  },800);
-  
-  box.onclick=()=>{ 
-    let f=box.querySelector('.face');
-    if(f.style.opacity==='1' && alive){ 
-      alive=false; clearInterval(noise); clearInterval(show); 
-      box.style.transform='scale(0.8)'; box.style.filter='blur(10px) brightness(0)'; box.style.opacity='0';
-      cleared++; stageText.innerText=`The eyes look at you - ${cleared}/5 turned off`;
-      setTimeout(()=>{ 
-        box.style.display='none';
-        if(cleared>=5){ grid.style.display='none'; win.style.display='block'; document.querySelector('.header').style.display='none'; } 
-      },500); 
-    } 
-  };
-  grid.appendChild(box);
+function loadStage(s){
+  grid.innerHTML='';
+  if(s===1) spawnTVs();
+  if(s===2) spawnDoors();
+  if(s===3) spawnSmiles();
+  if(s===4){ grid.style.display='none'; win.style.display='block'; document.querySelector('.header').style.display='none'; }
 }
 
-// 5 box terakhir biar full, tambah 1 dummy biar simetris kalau mau
-let dummy=document.createElement('div');
-dummy.className='tv-box';
-dummy.style.cssText='background:#050505;height:33vh;display:flex;align-items:center;justify-content:center;opacity:0.2;font-size:9px;letter-spacing:4px';
-dummy.innerText='SIGNAL LOST';
-grid.appendChild(dummy);
-</script>
+function spawnTVs(){
+  let cleared=0;
+  stageText.innerText=`The eyes look at you - ${cleared}/5 turned off`;
+  const lores=["The eyes look at you","They watch through static","Don't let them see you","Turn them off","You are not alone"];
+  for(let i=0;i<5;i++){
+    let box=document.createElement('div'); box.className='box';
+    box.innerHTML=`<canvas style="width:100%;height:100%"></canvas><div class="face" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:58px;opacity:0;transition:0.08s">ʘ_ʘ</div><div style="position:absolute;bottom:10px;left:12px;font-size:8px;opacity:0.3;letter-spacing:2px">CAM 0${i+1} // NO SIGNAL</div>`;
+    let canvas=box.querySelector('canvas'),ctx=canvas.getContext('2d'); canvas.width=500; canvas.height=350; let alive=true;
+    let noise=setInterval(()=>{ if(!alive) return; let img=ctx.createImageData(500,350); for(let j=0;j<img.data.length;j+=4){ let v=Math.random()*255; img.data[j]=v; img.data[j+1]=v; img.data[j+2]=v; img.data[j+3]=255; } ctx.putImageData(img,0,0); },28);
+    let faces=['ʘ_ʘ','ಠ_ಠ','☻','◉_◉','⚆_⚆'];
+    let show=setInterval(()=>{ if(!alive) return; if(Math.random()<0.3){ let f=box.querySelector('.face'); f.innerText=faces[Math.floor(Math.random()*faces.length)]; f.style.opacity='1'; stageText.innerText=lores[Math.floor(Math.random()*lores.length)]+` - ${cleared}/5`; setTimeout(()=>f.style.opacity='0',600); } },750);
+    box.onclick=()=>{ let f=box.querySelector('.face'); if(f.style.opacity==='1' && alive){ alive=false; clearInterval(noise); clearInterval(show); box.style.transform='scale(0.85)'; box.style.filter='blur(12px) brightness(0)'; cleared++; stageText.innerText=`The eyes look at you - ${cleared}/5 turned off`; setTimeout(()=>{ box.style.display='none'; if(cleared>=5) loadStage(2); },500); } };
+    grid.appendChild(box);
+  }
+  let dummy=document.createElement('div'); dummy.className='box'; dummy.style.opacity='0.15'; dummy.innerText='SIGNAL LOST'; grid.appendChild(dummy);
+}
+
+function spawnDoors(){
+  let cleared=0; stageText.innerText=`Something wants in - Hold it! - ${cleared}/5 sealed`;
+  for(let i=0;i<5;i++){
+    let box=document.createElement('div'); box.className='box'; box.style.background='#080202';
+    box.innerHTML=`<div style="text-align:center"><div class="door" style="font-size:72px;transition:0.1s">🚪</div><div class="knock" style="font-size:10px;opacity:0.4;margin-top:10px;letter-spacing:3px">HOLD TO SEAL</div></div><div class="bar" style="position:absolute;bottom:0;left:0;height:6px;background:#ff0000;width:0%"></div><div class="eyeDoor" style="position:absolute;top:15px;right:20px;font-size:14px;opacity:0">◉ is watching</div>`;
+    let hold=false,pct=0,alive=true,shake=0;
+    let t=setInterval(()=>{ if(!alive) return; if(hold){ pct+=4.2; shake=0; box.querySelector('.door').style.transform='scale(1.15)'; box.querySelector('.knock').innerText='HOLDING...'; } else { pct=Math.max(0,pct-2.5); shake+=0.7; box.style.transform=`translateX(${Math.sin(shake)*5}px)`; box.querySelector('.knock').innerText='IT IS KNOCKING...'; if(pct>20) box.querySelector('.eyeDoor').style.opacity='0.8'; else box.querySelector('.eyeDoor').style.opacity='0'; } box.querySelector('.bar').style.width=pct+'%'; if(pct>=100 && alive){ alive=false; clearInterval(t); box.style.transform='scale(0)'; cleared++; stageText.innerText=`Sealed ${cleared}/5 doors`; setTimeout(()=>{ box.style.display='none'; if(cleared>=5) loadStage(3); },400); } },35);
+    box.onmousedown=box.ontouchstart=()=>hold=true; box.onmouseup=box.ontouchend=box.onmouseleave=()=>hold=false;
+    grid.appendChild(box);
+  }
+  let dummy=document.createElement('div'); dummy.className='box'; dummy.style.opacity='0.1'; dummy.innerText='DO NOT OPEN'; grid.appendChild(dummy);
+}
+
+function spawnSmiles(){
+  let cleared=0; stageText.innerText=`It smiles at you - Click fast before it rips - ${cleared}/5 silenced`;
+  for(let i=0;i<5;i++){
+    let box=document.createElement('div'); box.className='box';
+    box.innerHTML=`<div class="scaryFace" style="text-align:center;transition:0.2s"><div class="eyes" style="font-size:22px;letter-spacing:16px">◉  ◉</div><div class="mouth" style="width:22px;height:8px;background:#fff;margin:14px auto 0;border-radius:0 0 30px 30px;transition:0.2s;display:flex;align-items:center;justify-content:center;overflow:hidden"></div><div class="blood" style="display:none;color:#ff0000;font-size:11px;margin-top:8px;letter-spacing:4px">|||</div></div><div class="bar" style="position:absolute;bottom:0;left:0;height:6px;background:linear-gradient(90deg,#ff0000,#ffaaaa);width:0%"></div>`;
+    let mouth=box.querySelector('.mouth'),eyes=box.querySelector('.eyes'),blood=box.querySelector('.blood'),face=box.querySelector('.scaryFace');
+    let width=22,height=8,stageSmile=0,clicks=0,alive=true;
+    let t=setInterval(()=>{
+      if(!alive) return; width+=0.55; height+=0.22;
+      if(width>45 && stageSmile==0){ stageSmile=1; mouth.style.background='#ffbbbb'; }
+      if(width>80 && stageSmile==1){ stageSmile=2; mouth.style.background='#ff5555'; blood.style.display='block'; eyes.innerText='◎  ◎'; eyes.style.color='#ff0000'; }
+      if(width>125 && stageSmile==2){ stageSmile=3; mouth.style.width='140px'; mouth.style.height='70px'; mouth.style.background='#ff0000'; mouth.style.borderRadius='4px'; mouth.innerHTML='<div style="font-size:14px;color:#000;font-weight:bold">︾︾︾︾︾</div>'; face.style.transform='scale(1.4)'; box.style.boxShadow='0 0 30px rgba(255,0,0,0.6)'; box.style.borderColor='#ff0000'; blood.innerText='BLOOD IS COMING'; }
+      mouth.style.width=width+'px'; mouth.style.height=height+'px';
+      if(width>150){ document.body.style.background='#300000'; setTimeout(()=>document.body.style.background='#000',90); }
+    },40);
+    box.onclick=()=>{ if(!alive) return; clicks++; width=Math.max(22,width-32); height=Math.max(8,height-12); box.querySelector('.bar').style.width=(clicks*10)+'%'; if(clicks>=10){ alive=false; clearInterval(t); box.style.transform='scale(0) rotate(720deg)'; cleared++; stageText.innerText=`Silenced ${cleared}/5 smiles`; setTimeout(()=>{ box.style.display='none'; if(cleared>=5) loadStage(4); },500); } };
+    grid.appendChild(box);
+  }
+  let dummy=document.createElement('div'); dummy.className='box'; dummy.style.opacity='0.1'; dummy.innerText='DO NOT SMILE BACK'; grid.appendChild(dummy);
+}
+
+loadStage(1);
+                     </script>
