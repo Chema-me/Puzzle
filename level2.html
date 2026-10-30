@@ -1,14 +1,23 @@
-<!-- DESIGN AWAL FAVORIT - LAYAR BESAR + SUARA - FIX 5 -->
-<div id="level02" style="max-width:700px;margin:auto">
-<div class="card" style="background:#050505;border:1px solid #222;padding:20px">
-<b style="letter-spacing:4px;font-size:14px">LEVEL 02 // THE FACES IN THE STATIC</b>
-<div id="stageText" style="font-size:11px;opacity:0.6;margin:10px 0;letter-spacing:1px">TURN THEM OFF - 0/5</div>
-<div id="grid02" style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:15px"></div>
-<div id="win02" style="display:none;text-align:center;padding:100px 0">
-<div style="font-size:24px;letter-spacing:6px;color:#fff">You have completed the beginning</div>
-<div style="font-size:11px;opacity:0.4;margin-top:12px;letter-spacing:2px">The hardest begins now...</div>
-</div>
-</div>
+<!-- DESIGN AWAL FULLSCREEN + LORE - 100% ASLI -->
+<style>
+  body{ margin:0; background:#000; color:#fff; font-family:monospace; }
+  #level02{ width:100vw; min-height:100vh; padding:0; box-sizing:border-box; }
+  .header{ padding:25px 20px 10px; border-bottom:1px solid #222; }
+  .lore{ font-size:10px; opacity:0.5; letter-spacing:2px; margin-top:8px; font-style:italic; }
+  #grid02{ display:grid; grid-template-columns:1fr 1fr; gap:0; width:100%; }
+  .tv-box{ background:#000; height:33vh; min-height:200px; position:relative; overflow:hidden; border:0.5px solid #111; cursor:crosshair; transition:0.3s; }
+</style>
+
+<div id="level02">
+  <div class="header">
+    <b style="letter-spacing:6px; font-size:13px">LEVEL 02 // THE FACES IN THE STATIC</b>
+    <div id="stageText" class="lore">The eyes look at you - Turn them off - 0/5</div>
+  </div>
+  <div id="grid02"></div>
+  <div id="win02" style="display:none;text-align:center;padding:150px 20px">
+    <div style="font-size:28px;letter-spacing:8px">You have completed the beginning</div>
+    <div style="font-size:11px;opacity:0.4;margin-top:15px;letter-spacing:3px">The hardest begins now...</div>
+  </div>
 </div>
 
 <script>
@@ -20,59 +29,58 @@ let audioCtx;
 function startCreepyAudio(){
   try{
     audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-    let osc=audioCtx.createOscillator(); let gain=audioCtx.createGain(); let filter=audioCtx.createBiquadFilter();
-    osc.type='sawtooth'; osc.frequency.value=42; filter.type='lowpass'; filter.frequency.value=350; gain.gain.value=0.06;
+    let osc=audioCtx.createOscillator(),gain=audioCtx.createGain(),filter=audioCtx.createBiquadFilter();
+    osc.type='sawtooth'; osc.frequency.value=40; filter.type='lowpass'; filter.frequency.value=300; gain.gain.value=0.07;
     osc.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination); osc.start();
-    setInterval(()=>{ if(!audioCtx) return; let o=audioCtx.createOscillator(); let g=audioCtx.createGain(); o.frequency.value=1000+Math.random()*2500; g.gain.value=0.03; o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.15); },600);
+    setInterval(()=>{ if(!audioCtx) return; let o=audioCtx.createOscillator(),g=audioCtx.createGain(); o.frequency.value=900+Math.random()*3000; g.gain.value=0.035; o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.18); },500);
   }catch(e){}
 }
 document.body.addEventListener('click',()=>{ if(!audioCtx) startCreepyAudio(); },{once:true});
 
-function loadStage(){
-  let cleared=0;
-  stageText.innerText=`TURN THEM OFF - ${cleared}/5`;
-  for(let i=0;i<5;i++){
-    let box=document.createElement('div');
-    box.style.cssText='background:#000;height:180px;position:relative;overflow:hidden;border:1px solid #222;cursor:crosshair;transition:0.3s';
-    box.innerHTML='<canvas style="width:100%;height:100%"></canvas><div class="face" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:42px;opacity:0;transition:0.1s;font-weight:bold">ʘ_ʘ</div>';
-    
-    let canvas=box.querySelector('canvas'); let ctx=canvas.getContext('2d'); canvas.width=300; canvas.height=180; let alive=true;
-    
-    let noise=setInterval(()=>{ 
-      if(!alive) return; 
-      let img=ctx.createImageData(300,180); 
-      for(let j=0;j<img.data.length;j+=4){ let v=Math.random()*255; img.data[j]=v; img.data[j+1]=v; img.data[j+2]=v; img.data[j+3]=255; } 
-      ctx.putImageData(img,0,0); 
-    },35);
-    
-    let faces=['ʘ_ʘ','ಠ_ಠ','☻','◉_◉','⚆_⚆','⍜_⍜'];
-    let show=setInterval(()=>{ 
-      if(!alive) return; 
-      if(Math.random()<0.25){ 
-        let f=box.querySelector('.face'); 
-        f.innerText=faces[Math.floor(Math.random()*faces.length)]; 
-        f.style.opacity='1'; 
-        box.style.borderColor='#fff';
-        box.style.boxShadow='0 0 15px rgba(255,255,255,0.2)';
-        setTimeout(()=>{ f.style.opacity='0'; box.style.borderColor='#222'; box.style.boxShadow='none'; },500); 
-      } 
-    },700);
-    
-    box.onclick=()=>{ 
-      let f=box.querySelector('.face');
-      if(f.style.opacity==='1' && alive){ 
-        alive=false; clearInterval(noise); clearInterval(show); 
-        box.style.transform='scale(0) rotate(5deg)'; box.style.filter='blur(6px)'; 
-        cleared++; stageText.innerText=`TURN THEM OFF - ${cleared}/5`;
-        setTimeout(()=>{ 
-          box.remove(); 
-          if(cleared>=5){ grid.style.display='none'; win.style.display='block'; stageText.innerText='COMPLETE'; setTimeout(()=>location.href='#HARDEST',2500); } 
-        },400); 
-      } 
-    };
-    grid.appendChild(box);
-  }
+let cleared=0;
+const lores=["The eyes look at you","They are watching through the static","Don't let them see you","Turn them off before they find you","You are not alone in the signal"];
+
+for(let i=0;i<5;i++){
+  let box=document.createElement('div');
+  box.className='tv-box';
+  box.innerHTML='<canvas style="width:100%;height:100%"></canvas><div class="face" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:54px;opacity:0;transition:0.08s">ʘ_ʘ</div><div class="label" style="position:absolute;bottom:8px;left:10px;font-size:8px;opacity:0.3;letter-spacing:2px">CAM 0'+(i+1)+' // NO SIGNAL</div>';
+  
+  let canvas=box.querySelector('canvas'); let ctx=canvas.getContext('2d'); canvas.width=400; canvas.height=300; let alive=true;
+  
+  let noise=setInterval(()=>{ if(!alive) return; let img=ctx.createImageData(400,300); for(let j=0;j<img.data.length;j+=4){ let v=Math.random()*255; img.data[j]=v; img.data[j+1]=v; img.data[j+2]=v; img.data[j+3]=255; } ctx.putImageData(img,0,0); },30);
+  
+  let faces=['ʘ_ʘ','ಠ_ಠ','☻','◉_◉','⚆_⚆','⍜_⍜','◐_◑'];
+  let show=setInterval(()=>{ 
+    if(!alive) return; 
+    if(Math.random()<0.28){ 
+      let f=box.querySelector('.face'); 
+      f.innerText=faces[Math.floor(Math.random()*faces.length)]; 
+      f.style.opacity='1'; 
+      box.style.background='#0a0a0a';
+      stageText.innerText=lores[Math.floor(Math.random()*lores.length)]+' - '+cleared+'/5';
+      setTimeout(()=>{ f.style.opacity='0'; box.style.background='#000'; },550); 
+    } 
+  },800);
+  
+  box.onclick=()=>{ 
+    let f=box.querySelector('.face');
+    if(f.style.opacity==='1' && alive){ 
+      alive=false; clearInterval(noise); clearInterval(show); 
+      box.style.transform='scale(0.8)'; box.style.filter='blur(10px) brightness(0)'; box.style.opacity='0';
+      cleared++; stageText.innerText=`The eyes look at you - ${cleared}/5 turned off`;
+      setTimeout(()=>{ 
+        box.style.display='none';
+        if(cleared>=5){ grid.style.display='none'; win.style.display='block'; document.querySelector('.header').style.display='none'; } 
+      },500); 
+    } 
+  };
+  grid.appendChild(box);
 }
 
-loadStage();
-      </script>
+// 5 box terakhir biar full, tambah 1 dummy biar simetris kalau mau
+let dummy=document.createElement('div');
+dummy.className='tv-box';
+dummy.style.cssText='background:#050505;height:33vh;display:flex;align-items:center;justify-content:center;opacity:0.2;font-size:9px;letter-spacing:4px';
+dummy.innerText='SIGNAL LOST';
+grid.appendChild(dummy);
+</script>
