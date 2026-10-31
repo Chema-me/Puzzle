@@ -1,171 +1,120 @@
-<!-- FINAL FIX - NO ZOOM + SMILE ROBEK V3 ULTRA -->
+<!-- FINAL HARD + KRESEK BALIK - NO ZOOM -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <style>
-  *{ touch-action:manipulation; -webkit-touch-callout:none; -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color: transparent; }
-  body{ margin:0; background:#000; color:#fff; font-family:monospace; overflow-x:hidden; overscroll-behavior:none; }
+  *{ touch-action:manipulation; -webkit-touch-callout:none; -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent; }
+  body{ margin:0; background:#000; color:#fff; font-family:monospace; overflow-x:hidden; }
   #level02{ width:100vw; min-height:100vh; }
   .header{ padding:28px 20px 15px; border-bottom:1px solid #222; position:sticky; top:0; background:#000; z-index:10; }
   .lore{ font-size:11px; opacity:0.6; letter-spacing:2px; margin-top:10px; font-style:italic; }
   #grid02{ display:grid; grid-template-columns:1fr 1fr; gap:0; width:100%; }
-  .box{ height:35vh; min-height:220px; position:relative; overflow:hidden; border:0.5px solid #111; cursor:pointer; background:#000; transition:0.2s; display:flex; align-items:center; justify-content:center; }
-  @keyframes shake{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-3px)} 75%{transform:translateX(3px)} }
-  @keyframes drip{ 0%{transform:translateY(-10px); opacity:0} 100%{transform:translateY(10px); opacity:1} }
+  .box{ height:35vh; min-height:220px; position:relative; overflow:hidden; border:0.5px solid #111; cursor:pointer; background:#000; display:flex; align-items:center; justify-content:center; }
+  @keyframes shake{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
 </style>
 
 <div id="level02">
   <div class="header">
     <b style="letter-spacing:7px; font-size:13px">LEVEL 02 // THREE RITUALS</b>
-    <div id="stageText" class="lore">The eyes look at you - 0/5 turned off</div>
+    <div id="stageText" class="lore">Click anywhere for audio - The eyes look at you - 0/5</div>
   </div>
   <div id="grid02"></div>
   <div id="win02" style="display:none;text-align:center;padding:180px 20px">
     <div style="font-size:30px;letter-spacing:8px">You have completed the beginning</div>
-    <div style="font-size:11px;opacity:0.4;margin-top:15px;letter-spacing:3px">The hardest begins now...</div>
   </div>
 </div>
 
 <script>
 const grid=document.getElementById('grid02');
 const stageText=document.getElementById('stageText');
-const win=document.getElementById('win02');
 let audioCtx, audioStarted=false;
-function startAudio(){ if(audioStarted) return; audioStarted=true; try{ audioCtx=new (window.AudioContext||window.webkitAudioContext)(); let osc=audioCtx.createOscillator(),gain=audioCtx.createGain(),filter=audioCtx.createBiquadFilter(); osc.type='sawtooth'; osc.frequency.value=38; filter.type='lowpass'; filter.frequency.value=280; gain.gain.value=0.08; osc.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination); osc.start(); setInterval(()=>{ if(!audioCtx) return; let o=audioCtx.createOscillator(),g=audioCtx.createGain(); o.frequency.value=800+Math.random()*3500; g.gain.value=0.04; o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.2); },450); }catch(e){} }
-document.addEventListener('touchstart', (e)=>{ if(e.touches.length>1) e.preventDefault(); startAudio(); }, {passive:false});
+
+function startAudio(){
+  if(audioStarted) return; audioStarted=true;
+  try{
+    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    
+    // DRONE SEREM
+    let osc=audioCtx.createOscillator(),gain=audioCtx.createGain(),filter=audioCtx.createBiquadFilter();
+    osc.type='sawtooth'; osc.frequency.value=35; filter.type='lowpass'; filter.frequency.value=250; gain.gain.value=0.09;
+    osc.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination); osc.start();
+
+    // KRESEK BALIK - LEBIH SEREM
+    setInterval(()=>{
+      if(!audioCtx) return;
+      // kresek pendek
+      let o=audioCtx.createOscillator(), g=audioCtx.createGain(), f=audioCtx.createBiquadFilter();
+      o.type='square'; o.frequency.value=1200+Math.random()*4000; 
+      f.type='bandpass'; f.frequency.value=1500+Math.random()*2000;
+      g.gain.value=0.12; // lebih keras
+      g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+0.25);
+      o.connect(f); f.connect(g); g.connect(audioCtx.destination);
+      o.start(); o.stop(audioCtx.currentTime+0.25);
+    },280); // lebih sering dari 450 -> 280
+
+    // tambahan static noise tipis
+    setInterval(()=>{
+      let o=audioCtx.createOscillator(), g=audioCtx.createGain();
+      o.frequency.value=50+Math.random()*100; g.gain.value=0.03;
+      o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.08);
+    },150);
+
+  }catch(e){}
+}
+document.addEventListener('touchstart', (e)=>{ startAudio(); }, {passive:false});
 document.addEventListener('click', startAudio, {once:true});
 
-function loadStage(s){ grid.innerHTML=''; if(s===1) spawnTVs(); if(s===2) spawnDoors(); if(s===3) spawnSmiles(); if(s===4){ grid.style.display='none'; win.style.display='block'; document.querySelector('.header').style.display='none'; } }
+function loadStage(s){ grid.innerHTML=''; if(s===1) spawnTVs(); if(s===2) spawnDoors(); if(s===3) spawnSmiles(); if(s===4){ grid.style.display='none'; document.getElementById('win02').style.display='block'; } }
 
 function spawnTVs(){
-  let cleared=0; stageText.innerText=`The eyes look at you - ${cleared}/5 turned off`;
+  let cleared=0; stageText.innerText=`The eyes look at you - ${cleared}/5 - BE FAST`;
   for(let i=0;i<5;i++){
     let box=document.createElement('div'); box.className='box';
-    box.innerHTML=`<canvas style="width:100%;height:100%"></canvas><div class="face" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:58px;opacity:0">ʘ_ʘ</div><div style="position:absolute;bottom:10px;left:12px;font-size:8px;opacity:0.3">CAM 0${i+1}</div>`;
+    box.innerHTML=`<canvas style="width:100%;height:100%"></canvas><div class="face" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:60px;opacity:0;font-weight:bold">ʘ_ʘ</div>`;
     let canvas=box.querySelector('canvas'),ctx=canvas.getContext('2d'); canvas.width=500; canvas.height=350; let alive=true;
-    let noise=setInterval(()=>{ if(!alive) return; let img=ctx.createImageData(500,350); for(let j=0;j<img.data.length;j+=4){ let v=Math.random()*255; img.data[j]=v; img.data[j+1]=v; img.data[j+2]=v; img.data[j+3]=255; } ctx.putImageData(img,0,0); },28);
-    let faces=['ʘ_ʘ','ಠ_ಠ','☻','◉_◉']; let show=setInterval(()=>{ if(!alive) return; if(Math.random()<0.3){ let f=box.querySelector('.face'); f.innerText=faces[Math.floor(Math.random()*faces.length)]; f.style.opacity='1'; setTimeout(()=>f.style.opacity='0',600); } },750);
-    box.addEventListener('touchend', (e)=>{ e.preventDefault(); handleClick(); }); box.addEventListener('click', (e)=>{ e.preventDefault(); handleClick(); });
-    function handleClick(){ let f=box.querySelector('.face'); if(f.style.opacity==='1' && alive){ alive=false; clearInterval(noise); clearInterval(show); box.style.transform='scale(0.85)'; box.style.filter='blur(12px) brightness(0)'; cleared++; stageText.innerText=`The eyes look at you - ${cleared}/5`; setTimeout(()=>{ box.style.display='none'; if(cleared>=5) loadStage(2); },500); } }
+    let noise=setInterval(()=>{ if(!alive) return; let img=ctx.createImageData(500,350); for(let j=0;j<img.data.length;j+=4){ let v=Math.random()*255; img.data[j]=v; img.data[j+1]=v; img.data[j+2]=v; img.data[j+3]=255; } ctx.putImageData(img,0,0); },25);
+    let faces=['ʘ_ʘ','ಠ_ಠ','◉_◉','⚆_⚆'];
+    // CEPETIN - muncul cuma 350ms
+    let show=setInterval(()=>{ if(!alive) return; if(Math.random()<0.22){ let f=box.querySelector('.face'); f.innerText=faces[Math.floor(Math.random()*faces.length)]; f.style.opacity='1'; setTimeout(()=>f.style.opacity='0',350); } },650);
+    let handler=(e)=>{ e.preventDefault(); let f=box.querySelector('.face'); if(f.style.opacity==='1' && alive){ alive=false; clearInterval(noise); clearInterval(show); box.style.transform='scale(0.8)'; box.style.filter='blur(10px)'; cleared++; stageText.innerText=`The eyes look at you - ${cleared}/5`; setTimeout(()=>{ box.style.display='none'; if(cleared>=5) loadStage(2); },400); } };
+    box.addEventListener('touchend', handler, {passive:false}); box.addEventListener('click', handler);
     grid.appendChild(box);
   }
 }
 
 function spawnDoors(){
-  let cleared=0; stageText.innerText=`Something wants in - ${cleared}/5 sealed`;
+  let cleared=0; stageText.innerText=`Hold it! Don't let go - ${cleared}/5 sealed`;
   for(let i=0;i<5;i++){
     let box=document.createElement('div'); box.className='box'; box.style.background='#080202';
-    box.innerHTML=`<div style="text-align:center"><div class="door" style="font-size:72px">🚪</div><div class="knock" style="font-size:10px;opacity:0.4;margin-top:10px">HOLD TO SEAL</div></div><div class="bar" style="position:absolute;bottom:0;left:0;height:6px;background:#f00;width:0%"></div>`;
-    let hold=false,pct=0,alive=true; let t=setInterval(()=>{ if(!alive) return; if(hold) pct+=4.2; else pct=Math.max(0,pct-2.5); box.querySelector('.bar').style.width=pct+'%'; if(pct>=100 && alive){ alive=false; clearInterval(t); cleared++; box.style.display='none'; if(cleared>=5) loadStage(3); } },35);
+    box.innerHTML=`<div style="text-align:center"><div class="door" style="font-size:70px">🚪</div><div style="font-size:10px;opacity:0.4" class="txt">HOLD!</div></div><div class="bar" style="position:absolute;bottom:0;left:0;height:7px;background:#f00;width:0%"></div>`;
+    let hold=false,pct=0,alive=true;
+    let t=setInterval(()=>{ if(!alive) return; if(hold) pct+=3.2; else pct=Math.max(0,pct-5.5); // CEPETIN TURUNNYA biar susah
+      box.querySelector('.bar').style.width=pct+'%'; if(pct>=100 && alive){ alive=false; clearInterval(t); cleared++; box.style.display='none'; if(cleared>=5) loadStage(3); } },30);
     box.addEventListener('touchstart', (e)=>{ e.preventDefault(); hold=true; }, {passive:false}); box.addEventListener('touchend', (e)=>{ e.preventDefault(); hold=false; }, {passive:false});
     box.addEventListener('mousedown', ()=>hold=true); box.addEventListener('mouseup', ()=>hold=false); box.addEventListener('mouseleave', ()=>hold=false);
     grid.appendChild(box);
   }
 }
 
-// SMILE SOBEK V3 - JAUH LEBIH BAGUS
 function spawnSmiles(){
-  let cleared=0; stageText.innerText=`Don't let it smile - Click fast! - ${cleared}/5 silenced`;
+  let cleared=0; stageText.innerText=`CLICK FAST! It rips faster now - ${cleared}/5`;
   for(let i=0;i<5;i++){
-    let box=document.createElement('div'); box.className='box'; box.style.background='#000';
-    box.innerHTML=`
-      <div class="scaryFace" style="text-align:center;position:relative">
-        <div class="eyes" style="font-size:24px;letter-spacing:18px;transition:0.3s">◉  ◉</div>
-        <div style="position:relative;margin:16px auto 0;width:fit-content">
-          <div class="mouth" style="width:24px;height:10px;background:#fff;border-radius:0 0 40px 40px;transition:0.15s;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center">
-            <div class="teeth" style="display:none;font-size:8px;letter-spacing:1px;color:#000">IIII</div>
-          </div>
-          <div class="crack" style="position:absolute;top:50%;left:50%;width:2px;height:0;background:#f00;transform:translate(-50%,-50%);transition:0.2s;opacity:0"></div>
-        </div>
-        <div class="blood" style="display:none;color:#f00;font-size:10px;margin-top:10px;letter-spacing:2px">
-          <div>▼ BLOOD ▼</div>
-          <div style="font-size:8px;opacity:0.7;margin-top:4px" class="drips">|||</div>
-        </div>
-        <div class="status" style="position:absolute;top:-30px;left:50%;transform:translateX(-50%);font-size:8px;letter-spacing:3px;opacity:0.5"></div>
-      </div>
-      <div class="bar" style="position:absolute;bottom:0;left:0;height:7px;background:linear-gradient(90deg,#f00,#ffaaaa);width:0%;box-shadow:0 0 10px #f00"></div>
-    `;
-    let mouth=box.querySelector('.mouth'), eyes=box.querySelector('.eyes'), blood=box.querySelector('.blood'), face=box.querySelector('.scaryFace'), teeth=box.querySelector('.teeth'), crack=box.querySelector('.crack'), status=box.querySelector('.status'), drips=box.querySelector('.drips');
-    let width=24,height=10,stage=0,clicks=0,alive=true,shakeInt=0;
-
+    let box=document.createElement('div'); box.className='box';
+    box.innerHTML=`<div class="scaryFace" style="text-align:center"><div class="eyes" style="font-size:24px;letter-spacing:18px">◉  ◉</div><div class="mouth" style="width:24px;height:10px;background:#fff;margin:14px auto 0;border-radius:0 0 40px 40px;transition:0.1s;display:flex;align-items:center;justify-content:center;overflow:hidden"><div class="teeth" style="display:none;font-size:8px;color:#000">IIII</div></div><div class="blood" style="display:none;color:#f00;font-size:10px;margin-top:8px">▼ BLOOD ▼</div></div><div class="bar" style="position:absolute;bottom:0;left:0;height:7px;background:#f00;width:0%"></div>`;
+    let mouth=box.querySelector('.mouth'), eyes=box.querySelector('.eyes'), blood=box.querySelector('.blood'), face=box.querySelector('.scaryFace'), teeth=box.querySelector('.teeth');
+    let width=24,height=10,stage=0,clicks=0,alive=true;
     let t=setInterval(()=>{
       if(!alive) return;
-      width+=0.65; height+=0.28; shakeInt++;
-
-      // STAGE 1 - Mulai meregang
-      if(width>45 && stage==0){ stage=1; mouth.style.background='#ffcccc'; status.innerText='IT NOTICES YOU'; status.style.color='#ffaaaa'; eyes.style.transform='scale(1.15)'; }
-
-      // STAGE 2 - Gigi muncul + darah
-      if(width>75 && stage==1){ 
-        stage=2; 
-        mouth.style.background='#ff8888'; 
-        teeth.style.display='block'; 
-        blood.style.display='block'; 
-        eyes.innerText='◉  ◉'; 
-        eyes.style.color='#ff0000'; 
-        eyes.style.textShadow='0 0 15px #f00';
-        box.style.animation='shake 0.15s infinite';
-        status.innerText='DON\'T STOP CLICKING';
-        status.style.color='#f00';
-        drips.style.animation='drip 0.4s infinite';
-      }
-
-      // STAGE 3 - ROBEK TOTAL - PALING SEREM
-      if(width>115 && stage==2){ 
-        stage=3; 
-        mouth.style.width='160px'; 
-        mouth.style.height='85px'; 
-        mouth.style.background='linear-gradient(180deg,#8a0000 0%,#ff0000 50%,#440000 100%)'; 
-        mouth.style.borderRadius='8px'; 
-        mouth.style.border='2px solid #ff0000';
-        teeth.innerHTML='<div style="color:#fff;font-size:11px;line-height:12px">▼▼▼<br>IIII<br>▲▲▲</div>';
-        teeth.style.display='block';
-        crack.style.height='90px'; crack.style.opacity='1'; crack.style.width='3px'; crack.style.boxShadow='0 0 10px #f00';
-        face.style.transform='scale(1.5)'; 
-        eyes.innerText='◎  ◎'; 
-        eyes.style.fontSize='32px'; 
-        eyes.style.color='#ff0000'; 
-        eyes.style.letterSpacing='28px';
-        eyes.style.filter='blur(1px)';
-        box.style.boxShadow='inset 0 0 80px rgba(255,0,0,0.5), 0 0 40px rgba(255,0,0,0.8)'; 
-        box.style.borderColor='#ff0000'; 
-        blood.innerHTML='<div style="font-size:12px;animation:shake 0.1s infinite">█ BLOOD █</div><div style="font-size:9px;margin-top:6px;color:#ffaaaa">IT RIPS OPEN</div>';
-        status.innerText='TOO LATE';
-        status.style.fontSize='12px';
-        document.body.style.background='#2a0000'; setTimeout(()=>document.body.style.background='#000',120);
-      }
-
+      width+=1.15; height+=0.48; // CEPETIN 2x LIPAT
+      if(width>55 && stage==0){ stage=1; mouth.style.background='#ffaaaa'; teeth.style.display='block'; }
+      if(width>85 && stage==1){ stage=2; mouth.style.background='#ff4444'; blood.style.display='block'; eyes.innerText='◎  ◎'; eyes.style.color='#f00'; box.style.animation='shake 0.12s infinite'; }
+      if(width>115 && stage==2){ stage=3; mouth.style.width='150px'; mouth.style.height='80px'; mouth.style.background='#f00'; mouth.innerHTML='<div style="color:#fff;font-size:12px">▼▼▼<br>IIII<br>▲▲▲</div>'; face.style.transform='scale(1.5)'; box.style.boxShadow='0 0 40px #f00'; document.body.style.background='#300'; setTimeout(()=>document.body.style.background='#000',100); }
       if(stage<3){ mouth.style.width=width+'px'; mouth.style.height=height+'px'; }
+    },30); // interval lebih cepet dari 38 -> 30
 
-      if(width>170){ // Game over flash
-        document.body.style.background='#ff0000'; setTimeout(()=>document.body.style.background='#000',60);
-      }
-    },38);
-
-    let handleSmileClick = (e)=>{
-      if(e) e.preventDefault();
-      if(!alive) return;
-      clicks++; 
-      width=Math.max(24,width-38); 
-      height=Math.max(10,height-16);
-      box.querySelector('.bar').style.width=(clicks*10)+'%';
-      face.style.transform='scale(0.85)'; setTimeout(()=>{ if(alive) face.style.transform= stage>=3 ? 'scale(1.5)' : 'scale(1)'; },70);
-      
-      if(clicks>=12){ // Butuh 12 klik sekarang biar lebih challenging
-        alive=false; clearInterval(t); 
-        box.style.animation='none';
-        mouth.style.background='#000'; mouth.innerHTML='<div style="color:#333;font-size:10px">X_X</div>'; 
-        blood.innerHTML='<div style="color:#555">SILENCED</div>'; 
-        eyes.innerText='x  x'; eyes.style.color='#333'; eyes.style.textShadow='none';
-        box.style.transform='scale(0) rotate(1080deg)'; box.style.filter='blur(12px)'; 
-        cleared++; stageText.innerText=`Silenced ${cleared}/5 smiles`; 
-        setTimeout(()=>{ box.style.display='none'; if(cleared>=5) loadStage(4); },600); 
-      }
-    };
-
-    box.addEventListener('touchend', handleSmileClick, {passive:false});
-    box.addEventListener('click', handleSmileClick);
+    let handler=(e)=>{ e.preventDefault(); if(!alive) return; clicks++; width=Math.max(24,width-30); height=Math.max(10,height-12); box.querySelector('.bar').style.width=(clicks*8.5)+'%'; if(clicks>=14){ alive=false; clearInterval(t); box.style.animation='none'; box.style.display='none'; cleared++; stageText.innerText=`Silenced ${cleared}/5`; if(cleared>=5) loadStage(4); } };
+    box.addEventListener('touchend', handler, {passive:false}); box.addEventListener('click', handler);
     grid.appendChild(box);
   }
 }
 
 loadStage(1);
-      </script>
+</script>
