@@ -1,120 +1,130 @@
-<!-- FINAL HARD + KRESEK BALIK - NO ZOOM -->
+<!-- THE CORNER - AUTO SOUND + KRESEK FULL -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <style>
-  *{ touch-action:manipulation; -webkit-touch-callout:none; -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent; }
-  body{ margin:0; background:#000; color:#fff; font-family:monospace; overflow-x:hidden; }
+  *{ touch-action:manipulation; -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent; }
+  body{ margin:0; background:#000; color:#fff; font-family:monospace; }
   #level02{ width:100vw; min-height:100vh; }
-  .header{ padding:28px 20px 15px; border-bottom:1px solid #222; position:sticky; top:0; background:#000; z-index:10; }
-  .lore{ font-size:11px; opacity:0.6; letter-spacing:2px; margin-top:10px; font-style:italic; }
-  #grid02{ display:grid; grid-template-columns:1fr 1fr; gap:0; width:100%; }
-  .box{ height:35vh; min-height:220px; position:relative; overflow:hidden; border:0.5px solid #111; cursor:pointer; background:#000; display:flex; align-items:center; justify-content:center; }
-  @keyframes shake{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
+  .header{ padding:20px; border-bottom:1px solid #222; position:sticky; top:0; background:#000; z-index:10; }
+  .lore{ font-size:11px; opacity:0.6; letter-spacing:2px; margin-top:8px; }
+  #grid02{ display:grid; grid-template-columns:1fr 1fr; gap:0; }
+  .box{ height:36vh; min-height:230px; position:relative; overflow:hidden; border:0.5px solid #111; background:#000; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  @keyframes shake{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
 </style>
 
 <div id="level02">
   <div class="header">
-    <b style="letter-spacing:7px; font-size:13px">LEVEL 02 // THREE RITUALS</b>
-    <div id="stageText" class="lore">Click anywhere for audio - The eyes look at you - 0/5</div>
+    <b id="levelTitle">LEVEL 02 // THREE RITUALS</b>
+    <div id="stageText" class="lore">AUDIO AUTO ON - The eyes look at you - 0/5</div>
   </div>
   <div id="grid02"></div>
   <div id="win02" style="display:none;text-align:center;padding:180px 20px">
-    <div style="font-size:30px;letter-spacing:8px">You have completed the beginning</div>
+    <div style="font-size:28px;letter-spacing:8px">You have completed the beginning</div>
   </div>
 </div>
 
 <script>
 const grid=document.getElementById('grid02');
 const stageText=document.getElementById('stageText');
-let audioCtx, audioStarted=false;
+let audioCtx, masterGain, audioStarted=false;
 
 function startAudio(){
-  if(audioStarted) return; audioStarted=true;
+  if(audioStarted) return;
   try{
     audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-    
-    // DRONE SEREM
-    let osc=audioCtx.createOscillator(),gain=audioCtx.createGain(),filter=audioCtx.createBiquadFilter();
-    osc.type='sawtooth'; osc.frequency.value=35; filter.type='lowpass'; filter.frequency.value=250; gain.gain.value=0.09;
-    osc.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination); osc.start();
+    audioStarted=true;
+    masterGain=audioCtx.createGain(); masterGain.gain.value=0.22; masterGain.connect(audioCtx.destination);
 
-    // KRESEK BALIK - LEBIH SEREM
+    // DRONE
+    let osc=audioCtx.createOscillator(), filt=audioCtx.createBiquadFilter(), g=audioCtx.createGain();
+    osc.type='sawtooth'; osc.frequency.value=36; filt.type='lowpass'; filt.frequency.value=220; g.gain.value=0.6;
+    osc.connect(filt); filt.connect(g); g.connect(masterGain); osc.start();
+
+    // KRESEK UTAMA - WHITE NOISE
     setInterval(()=>{
       if(!audioCtx) return;
-      // kresek pendek
-      let o=audioCtx.createOscillator(), g=audioCtx.createGain(), f=audioCtx.createBiquadFilter();
-      o.type='square'; o.frequency.value=1200+Math.random()*4000; 
-      f.type='bandpass'; f.frequency.value=1500+Math.random()*2000;
-      g.gain.value=0.12; // lebih keras
-      g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+0.25);
-      o.connect(f); f.connect(g); g.connect(audioCtx.destination);
-      o.start(); o.stop(audioCtx.currentTime+0.25);
-    },280); // lebih sering dari 450 -> 280
+      let bufferSize=audioCtx.sampleRate*0.4;
+      let buffer=audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      let data=buffer.getChannelData(0);
+      for(let i=0;i<bufferSize;i++) data[i]=(Math.random()*2-1);
+      let src=audioCtx.createBufferSource(); src.buffer=buffer;
+      let bf=audioCtx.createBiquadFilter(); bf.type='bandpass'; bf.frequency.value=2000+Math.random()*2500; bf.Q.value=0.8;
+      let gg=audioCtx.createGain(); gg.gain.value=1.1; gg.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime+0.4);
+      src.connect(bf); bf.connect(gg); gg.connect(masterGain); src.start();
+    },300);
 
-    // tambahan static noise tipis
+    // KRESEK TIK TIK
     setInterval(()=>{
-      let o=audioCtx.createOscillator(), g=audioCtx.createGain();
-      o.frequency.value=50+Math.random()*100; g.gain.value=0.03;
-      o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.08);
-    },150);
+      let o=audioCtx.createOscillator(), gg=audioCtx.createGain();
+      o.type='square'; o.frequency.value=900+Math.random()*4000;
+      gg.gain.value=0.5; gg.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime+0.12);
+      o.connect(gg); gg.connect(masterGain); o.start(); o.stop(audioCtx.currentTime+0.12);
+    },170);
 
   }catch(e){}
 }
-document.addEventListener('touchstart', (e)=>{ startAudio(); }, {passive:false});
-document.addEventListener('click', startAudio, {once:true});
 
-function loadStage(s){ grid.innerHTML=''; if(s===1) spawnTVs(); if(s===2) spawnDoors(); if(s===3) spawnSmiles(); if(s===4){ grid.style.display='none'; document.getElementById('win02').style.display='block'; } }
+// AUTO - coba semua cara biar nyala sendiri
+window.addEventListener('load', ()=>{ setTimeout(startAudio, 100); });
+document.addEventListener('touchstart', startAudio, {once:true, passive:false});
+document.addEventListener('click', startAudio, {once:true});
+document.addEventListener('touchend', startAudio, {once:true});
+setTimeout(startAudio, 500); // force auto
+
+function loadStage(s){ grid.innerHTML=''; if(s===1) spawnTVs(); if(s===2) spawnCorner(); if(s===3) spawnSmiles(); if(s===4){ grid.style.display='none'; document.getElementById('win02').style.display='block'; } }
 
 function spawnTVs(){
-  let cleared=0; stageText.innerText=`The eyes look at you - ${cleared}/5 - BE FAST`;
+  let cleared=0; document.getElementById('levelTitle').innerText='LEVEL 02 // THE STATIC'; stageText.innerText=`The eyes look at you - ${cleared}/5 - BE FAST`;
   for(let i=0;i<5;i++){
     let box=document.createElement('div'); box.className='box';
-    box.innerHTML=`<canvas style="width:100%;height:100%"></canvas><div class="face" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:60px;opacity:0;font-weight:bold">ʘ_ʘ</div>`;
+    box.innerHTML=`<canvas style="width:100%;height:100%"></canvas><div class="face" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:62px;opacity:0">ʘ_ʘ</div>`;
     let canvas=box.querySelector('canvas'),ctx=canvas.getContext('2d'); canvas.width=500; canvas.height=350; let alive=true;
     let noise=setInterval(()=>{ if(!alive) return; let img=ctx.createImageData(500,350); for(let j=0;j<img.data.length;j+=4){ let v=Math.random()*255; img.data[j]=v; img.data[j+1]=v; img.data[j+2]=v; img.data[j+3]=255; } ctx.putImageData(img,0,0); },25);
-    let faces=['ʘ_ʘ','ಠ_ಠ','◉_◉','⚆_⚆'];
-    // CEPETIN - muncul cuma 350ms
-    let show=setInterval(()=>{ if(!alive) return; if(Math.random()<0.22){ let f=box.querySelector('.face'); f.innerText=faces[Math.floor(Math.random()*faces.length)]; f.style.opacity='1'; setTimeout(()=>f.style.opacity='0',350); } },650);
-    let handler=(e)=>{ e.preventDefault(); let f=box.querySelector('.face'); if(f.style.opacity==='1' && alive){ alive=false; clearInterval(noise); clearInterval(show); box.style.transform='scale(0.8)'; box.style.filter='blur(10px)'; cleared++; stageText.innerText=`The eyes look at you - ${cleared}/5`; setTimeout(()=>{ box.style.display='none'; if(cleared>=5) loadStage(2); },400); } };
-    box.addEventListener('touchend', handler, {passive:false}); box.addEventListener('click', handler);
+    let faces=['ʘ_ʘ','ಠ_ಠ','◉_◉']; let show=setInterval(()=>{ if(!alive) return; if(Math.random()<0.24){ let f=box.querySelector('.face'); f.innerText=faces[Math.floor(Math.random()*faces.length)]; f.style.opacity='1'; setTimeout(()=>f.style.opacity='0',350); } },650);
+    let h=(e)=>{ e.preventDefault(); startAudio(); let f=box.querySelector('.face'); if(f.style.opacity==='1' && alive){ alive=false; clearInterval(noise); clearInterval(show); box.style.display='none'; cleared++; stageText.innerText=`The eyes look at you - ${cleared}/5`; if(cleared>=5) loadStage(2); } };
+    box.addEventListener('touchend', h, {passive:false}); box.addEventListener('click', h);
     grid.appendChild(box);
   }
 }
 
-function spawnDoors(){
-  let cleared=0; stageText.innerText=`Hold it! Don't let go - ${cleared}/5 sealed`;
+function spawnCorner(){
+  let cleared=0; document.getElementById('levelTitle').innerText='LEVEL 02 // THE CORNER'; stageText.innerText=`It stands in the corner - Push it down! - ${cleared}/5`;
   for(let i=0;i<5;i++){
-    let box=document.createElement('div'); box.className='box'; box.style.background='#080202';
-    box.innerHTML=`<div style="text-align:center"><div class="door" style="font-size:70px">🚪</div><div style="font-size:10px;opacity:0.4" class="txt">HOLD!</div></div><div class="bar" style="position:absolute;bottom:0;left:0;height:7px;background:#f00;width:0%"></div>`;
-    let hold=false,pct=0,alive=true;
-    let t=setInterval(()=>{ if(!alive) return; if(hold) pct+=3.2; else pct=Math.max(0,pct-5.5); // CEPETIN TURUNNYA biar susah
-      box.querySelector('.bar').style.width=pct+'%'; if(pct>=100 && alive){ alive=false; clearInterval(t); cleared++; box.style.display='none'; if(cleared>=5) loadStage(3); } },30);
-    box.addEventListener('touchstart', (e)=>{ e.preventDefault(); hold=true; }, {passive:false}); box.addEventListener('touchend', (e)=>{ e.preventDefault(); hold=false; }, {passive:false});
-    box.addEventListener('mousedown', ()=>hold=true); box.addEventListener('mouseup', ()=>hold=false); box.addEventListener('mouseleave', ()=>hold=false);
+    let box=document.createElement('div'); box.className='box'; box.style.background='#050505';
+    box.innerHTML=`
+      <div class="entity" style="text-align:center;transition:0.1s">
+        <div class="eyes2" style="font-size:12px;letter-spacing:22px;opacity:0.3">.. ..</div>
+        <div class="body" style="font-size:42px;margin-top:8px;filter:brightness(0.3)">👤</div>
+        <div style="font-size:8px;opacity:0.3;margin-top:12px;letter-spacing:3px" class="txt">CROUCHING</div>
+      </div>
+      <div class="bar" style="position:absolute;bottom:0;left:0;height:8px;background:#fff;width:0%"></div>
+    `;
+    let body=box.querySelector('.body'), eyes2=box.querySelector('.eyes2'), txt=box.querySelector('.txt'), entity=box.querySelector('.entity');
+    let height=30, stage=0, clicks=0, alive=true;
+    let t=setInterval(()=>{
+      if(!alive) return; height+=1.8;
+      if(height>60 && stage==0){ stage=1; eyes2.innerText='◉  ◉'; eyes2.style.opacity='0.8'; eyes2.style.color='#f00'; eyes2.style.textShadow='0 0 10px #f00'; txt.innerText='IT NOTICES YOU'; body.style.filter='brightness(0.7)'; }
+      if(height>110 && stage==1){ stage=2; body.style.fontSize='58px'; txt.innerText='IT STANDS UP'; txt.style.color='#f00'; txt.style.animation='shake 0.1s infinite'; box.style.boxShadow='inset 0 0 40px rgba(255,0,0,0.3)'; }
+      if(height>160 && stage==2){ stage=3; body.innerHTML='🧍‍♂️'; body.style.fontSize='78px'; eyes2.innerText='◎  ◎'; txt.innerText='IT IS COMING'; box.style.background='#1a0000'; }
+    },40);
+    let h=(e)=>{ e.preventDefault(); startAudio(); if(!alive) return; clicks++; height=Math.max(30,height-42); box.querySelector('.bar').style.width=(clicks*7.5)+'%'; entity.style.transform='scale(0.8)'; setTimeout(()=>entity.style.transform='scale(1)',60); if(clicks>=14){ alive=false; clearInterval(t); box.style.display='none'; cleared++; stageText.innerText=`Pushed ${cleared}/5 back`; if(cleared>=5) loadStage(3); } };
+    box.addEventListener('touchend', h, {passive:false}); box.addEventListener('click', h);
     grid.appendChild(box);
   }
 }
 
 function spawnSmiles(){
-  let cleared=0; stageText.innerText=`CLICK FAST! It rips faster now - ${cleared}/5`;
+  let cleared=0; document.getElementById('levelTitle').innerText='LEVEL 02 // SMILE'; stageText.innerText=`Don't let it rip - ${cleared}/5`;
   for(let i=0;i<5;i++){
     let box=document.createElement('div'); box.className='box';
-    box.innerHTML=`<div class="scaryFace" style="text-align:center"><div class="eyes" style="font-size:24px;letter-spacing:18px">◉  ◉</div><div class="mouth" style="width:24px;height:10px;background:#fff;margin:14px auto 0;border-radius:0 0 40px 40px;transition:0.1s;display:flex;align-items:center;justify-content:center;overflow:hidden"><div class="teeth" style="display:none;font-size:8px;color:#000">IIII</div></div><div class="blood" style="display:none;color:#f00;font-size:10px;margin-top:8px">▼ BLOOD ▼</div></div><div class="bar" style="position:absolute;bottom:0;left:0;height:7px;background:#f00;width:0%"></div>`;
-    let mouth=box.querySelector('.mouth'), eyes=box.querySelector('.eyes'), blood=box.querySelector('.blood'), face=box.querySelector('.scaryFace'), teeth=box.querySelector('.teeth');
-    let width=24,height=10,stage=0,clicks=0,alive=true;
-    let t=setInterval(()=>{
-      if(!alive) return;
-      width+=1.15; height+=0.48; // CEPETIN 2x LIPAT
-      if(width>55 && stage==0){ stage=1; mouth.style.background='#ffaaaa'; teeth.style.display='block'; }
-      if(width>85 && stage==1){ stage=2; mouth.style.background='#ff4444'; blood.style.display='block'; eyes.innerText='◎  ◎'; eyes.style.color='#f00'; box.style.animation='shake 0.12s infinite'; }
-      if(width>115 && stage==2){ stage=3; mouth.style.width='150px'; mouth.style.height='80px'; mouth.style.background='#f00'; mouth.innerHTML='<div style="color:#fff;font-size:12px">▼▼▼<br>IIII<br>▲▲▲</div>'; face.style.transform='scale(1.5)'; box.style.boxShadow='0 0 40px #f00'; document.body.style.background='#300'; setTimeout(()=>document.body.style.background='#000',100); }
-      if(stage<3){ mouth.style.width=width+'px'; mouth.style.height=height+'px'; }
-    },30); // interval lebih cepet dari 38 -> 30
-
-    let handler=(e)=>{ e.preventDefault(); if(!alive) return; clicks++; width=Math.max(24,width-30); height=Math.max(10,height-12); box.querySelector('.bar').style.width=(clicks*8.5)+'%'; if(clicks>=14){ alive=false; clearInterval(t); box.style.animation='none'; box.style.display='none'; cleared++; stageText.innerText=`Silenced ${cleared}/5`; if(cleared>=5) loadStage(4); } };
-    box.addEventListener('touchend', handler, {passive:false}); box.addEventListener('click', handler);
+    box.innerHTML=`<div style="text-align:center"><div class="eyes" style="font-size:24px;letter-spacing:18px">◉  ◉</div><div class="mouth" style="width:24px;height:10px;background:#fff;margin:14px auto 0;border-radius:0 0 40px 40px"></div><div class="blood" style="display:none;color:#f00;font-size:10px;margin-top:8px">▼ BLOOD ▼</div></div><div class="bar" style="position:absolute;bottom:0;left:0;height:7px;background:#f00;width:0%"></div>`;
+    let mouth=box.querySelector('.mouth'), eyes=box.querySelector('.eyes'), blood=box.querySelector('.blood');
+    let w=24,h=10,stage=0,clicks=0,alive=true;
+    let t=setInterval(()=>{ if(!alive) return; w+=1.2; h+=0.5; if(w>55 && stage==0){ stage=1; mouth.style.background='#ffaaaa'; } if(w>85 && stage==1){ stage=2; mouth.style.background='#f44'; blood.style.display='block'; eyes.innerText='◎  ◎'; eyes.style.color='#f00'; box.style.animation='shake 0.12s infinite'; } if(w>115 && stage==2){ stage=3; mouth.style.width='150px'; mouth.style.height='80px'; mouth.style.background='#f00'; mouth.innerHTML='<div style="color:#fff;font-size:12px">▼▼▼<br>IIII<br>▲▲▲</div>'; } if(stage<3){ mouth.style.width=w+'px'; mouth.style.height=h+'px'; } },30);
+    let hh=(e)=>{ e.preventDefault(); startAudio(); if(!alive) return; clicks++; w=Math.max(24,w-32); h=Math.max(10,h-12); box.querySelector('.bar').style.width=(clicks*7.5)+'%'; if(clicks>=14){ alive=false; clearInterval(t); box.style.display='none'; cleared++; if(cleared>=5) loadStage(4); } };
+    box.addEventListener('touchend', hh, {passive:false}); box.addEventListener('click', hh);
     grid.appendChild(box);
   }
 }
 
 loadStage(1);
-</script>
+                                                                                                                                                                                                                                                                                    </script>
