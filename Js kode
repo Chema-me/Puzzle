@@ -1,0 +1,85 @@
+// GANTI DI SINI AJA! Ganti gambar, judul, soal, dan jawaban
+const MISI = [
+  {
+    gambar: "https://picsum.photos/seed/misi1/400/300",
+    judul: "Misi 1 - Hutan",
+    soal: "Tantangan 1: Berapa 5 + 5? (ganti soal kamu di sini)",
+    jawaban: "10"
+  },
+  {
+    gambar: "https://picsum.photos/seed/misi2/400/300",
+    judul: "Misi 2 - Laut",
+    soal: "Tantangan 2: Apa ibu kota Indonesia?",
+    jawaban: "jakarta"
+  },
+  {
+    gambar: "https://picsum.photos/seed/misi3/400/300",
+    judul: "Misi 3 - Gunung",
+    soal: "Tantangan 3: Tulis kata 'penyelamat'",
+    jawaban: "penyelamat"
+  },
+  {
+    gambar: "https://picsum.photos/seed/misi4/400/300",
+    judul: "Misi 4 - Kota",
+    soal: "Tantangan 4: 2 x 9 = ?",
+    jawaban: "18"
+  },
+  {
+    gambar: "https://picsum.photos/seed/misi5/400/300",
+    judul: "Misi 5 - Angkasa",
+    soal: "Tantangan 5: Warna langit siang apa?",
+    jawaban: "biru"
+  },
+  {
+    gambar: "https://picsum.photos/seed/misi6/400/300",
+    judul: "Misi 6 - Final Boss",
+    soal: "Tantangan 6: Siapa nama kamu?",
+    jawaban: "faqi"
+  }
+];
+
+let misiAktif = 0;
+let selesai = [false,false,false,false,false,false];
+
+const meja = document.getElementById('meja');
+meja.innerHTML = MISI.map((m, i) => `
+  <div class="kartu" id="kartu-${i}" onclick="buka(${i})">
+    <img src="${m.gambar}">
+    <h3>${m.judul}</h3>
+    <p>Klik untuk buka</p>
+  </div>
+`).join('');
+
+function buka(i) {
+  misiAktif = i;
+  document.getElementById('popup').classList.remove('hidden');
+  document.getElementById('popup-img').src = MISI[i].gambar;
+  document.getElementById('popup-judul').innerText = MISI[i].judul;
+  document.getElementById('popup-soal').innerText = MISI[i].soal;
+  document.getElementById('jawaban').value = '';
+  document.getElementById('hasil').innerText = '';
+}
+
+function tutup() {
+  document.getElementById('popup').classList.add('hidden');
+}
+
+function cekJawaban() {
+  const jawab = document.getElementById('jawaban').value.toLowerCase().trim();
+  const benar = MISI[misiAktif].jawaban.toLowerCase().trim();
+  if (jawab === benar) {
+    document.getElementById('hasil').innerText = "✅ BENAR! Misi selesai!";
+    selesai[misiAktif] = true;
+    document.getElementById(`kartu-${misiAktif}`).classList.add('selesai');
+    updateSkor();
+    setTimeout(tutup, 1000);
+  } else {
+    document.getElementById('hasil').innerText = "❌ Salah, coba lagi!";
+  }
+}
+
+function updateSkor() {
+  const total = selesai.filter(x => x).length;
+  document.getElementById('skor').innerText = `${total} / 6`;
+  if (total === 6) alert('GG! Semua 6 misi selesai! Kamu penyelamat sejati!');
+                }
