@@ -1,0 +1,22 @@
+body { background: #1a120b; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
+.meja {
+  background: #8b5a2b; /* warna meja kayu */
+  padding: 25px; border-radius: 20px;
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 20px; max-width: 800px; margin: 0 auto;
+  box-shadow: 0 10px 30px black;
+}
+.kartu { background: white; color: black; border-radius: 15px; overflow: hidden; cursor: pointer; transition: 0.2s; }
+.kartu:hover { transform: scale(1.05) rotate(-1deg); }
+.kartu img { width: 100%; height: 140px; object-fit: cover; }
+.kartu h3 { margin: 10px; }
+.kartu.selesai { opacity: 0.6; border: 4px solid #22c55e; }
+.kartu.selesai::after { content: "✅ SELESAI"; display: block; background: #22c55e; color: white; padding: 5px; }
+
+.popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; }
+.popup.hidden { display: none; }
+.popup-box { background: white; color: black; padding: 20px; border-radius: 15px; width: 90%; max-width: 400px; }
+.popup-box img { width: 100%; height: 180px; object-fit: cover; border-radius: 10px; }
+.popup-box input { width: 100%; padding: 10px; margin: 10px 0; }
+.popup-box button { width: 100%; padding: 12px; background: #22c55e; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+.close { background: red !important; color: white; width: 40px !important; float: right; }
