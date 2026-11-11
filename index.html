@@ -1,53 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FINISH THIS</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
-*{box-sizing:border-box}
-body{margin:0;background:#040404;color:#fff;font-family:'JetBrains Mono',monospace;display:flex;justify-content:center;align-items:center;min-height:100vh}
-.wrap{width:100%;max-width:380px;border:1.5px solid rgba(0,255,136,.4);border-radius:30px;padding:28px 22px;background:#080808;box-shadow:0 0 60px rgba(0,255,136,.25)}
-h1{margin:0;font-size:48px;font-weight:800;line-height:.9;letter-spacing:12px;text-shadow:0 0 12px #00ff88, 0 0 35px #00ff88}
-.sub{color:#00ff88;opacity:.45;letter-spacing:5px;font-size:10px;margin-top:10px}
-.card{margin-top:24px;background:#000;border-radius:20px;padding:20px 18px;border:1px solid #141414}
-.l1{color:#555;font-size:13px}
-.l2{margin-top:14px;color:#00d9ff;font-size:14px}
-.l2 b{color:#fff;font-weight:400}
-.l3{margin-top:6px;color:#00d9ff;font-size:14px}
-.l3 span{color:#4ade80;letter-spacing:4px}
-.l4{margin-top:16px;color:#00ff88;font-size:11px;line-height:1.8}
-.inp{width:100%;margin-top:20px;background:transparent;border:1.8px solid #00ff88;border-radius:16px;padding:16px;color:#00ff88;text-align:center;letter-spacing:4px;font-size:15px;font-family:inherit;outline:none}
-.btn{width:100%;margin-top:12px;background:#00ff88;border:none;border-radius:16px;padding:17px;color:#000;text-align:center;letter-spacing:3px;font-weight:900;font-size:14px;font-family:inherit;box-shadow:0 0 28px rgba(0,255,136,.8);cursor:pointer}
-#r{text-align:center;margin-top:10px;font-size:11px;min-height:14px}
-</style>
+  <meta charset="UTF-8">
+  <title>Meja Misi - 6 Gambar</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="wrap">
-<h1>FINISH<br>THIS</h1>
-<div class="sub">PUZZLE LEVEL 01 // CIPHER</div>
-<div class="card">
-<div class="l1">> decrypt sequence:</div>
-<div class="l2">CODE: <b>8-5-12-12-15 // 23-15-18-12-4</b></div>
-<div class="l3">TARGET: <span>_ _ _ _ _ // _ _ _ _ _</span></div>
-<div class="l4">CLUE: A=1, B=2, C=3...<br>answer = 2 most famous words in the coding world</div>
-</div>
-<input id="a" class="inp" placeholder="ENTER ANSWER">
-<button class="btn" onclick="go()">DECRYPT</button>
-<div id="r"></div>
-</div>
-<script>
-function go(){
-let v=document.getElementById('a').value.toLowerCase().trim().replace(/\s+/g,'');
-let r=document.getElementById('r');
-if(v==='helloworld'){
-r.style.color='#00ff88'; r.innerText='> ACCESS GRANTED...';
-setTimeout(()=>{ location.href='level2.html'; },600);
-}else{
-r.style.color='#ff3344'; r.innerText='> STUPID TRY AGAIN';
-}
-}
-</script>
+  <h1>🗺️ MEJA MISI</h1>
+  <p>Pencet salah satu gambar untuk buka tantangan</p>
+  <p>Selesai: <b id="skor">0 / 6</b></p>
+
+  <div class="meja" id="meja"></div>
+
+  <!-- POPUP TANTANGAN -->
+  <div id="popup" class="popup hidden">
+    <div class="popup-box">
+      <button class="close" onclick="tutup()">X</button>
+      <img id="popup-img" src="">
+      <h2 id="popup-judul"></h2>
+      <p id="popup-soal"></p>
+      <input id="jawaban" placeholder="Ketik jawaban kamu...">
+      <button onclick="cekJawaban()">Jawab</button>
+      <p id="hasil"></p>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
 </body>
 </html>
