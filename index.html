@@ -1,30 +1,190 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Meja Misi - 6 Gambar</title>
-  <link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DO NOT OPEN</title>
+<style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#000; color:#ff0000; font-family:'Courier New',monospace; overflow:hidden; }
+  #noise { position:fixed; top:0; left:0; width:100%; height:100%; background:repeating-linear-gradient(0deg, rgba(255,0,0,0.03) 0px, transparent 1px, transparent 3px, rgba(255,0,0,0.03) 4px); z-index:10; pointer-events:none; }
+  #mata { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); font-size:180px; opacity:0.04; z-index:0; pointer-events:none; }
+  .wrap { position:relative; z-index:20; max-width:560px; margin:0 auto; padding:15px; height:100vh; display:flex; flex-direction:column; justify-content:center; }
+  .peringatan { text-align:center; font-size:11px; letter-spacing:3px; color:#660000; margin-bottom:10px; animation:flicker 2s infinite; }
+  @keyframes flicker { 0%,100%{opacity:1} 92%{opacity:1} 93%{opacity:0} 94%{opacity:1} 97%{opacity:0} 98%{opacity:1} }
+  .box { border:1px solid #550000; background:rgba(5,0,0,0.95); padding:20px; box-shadow:0 0 40px #ff0000; }
+  h1 { font-size:22px; text-align:center; color:#ff0000; text-shadow:0 0 15px #ff0000; letter-spacing:2px; }
+  .sub { text-align:center; font-size:11px; color:#888; margin-top:5px; }
+  .level { text-align:center; color:#fff; margin:12px 0; font-size:13px; letter-spacing:2px; }
+  .level b { color:#ff0000; }
+  .timer { text-align:center; color:#ff0000; font-size:26px; font-weight:bold; text-shadow:0 0 10px #ff0000; }
+  .bar-luar { height:4px; background:#220000; margin:8px 0; }
+  #bar { height:100%; background:#ff0000; width:100%; transition:width 1s linear; box-shadow:0 0 10px #ff0000; }
+  .nyawa { text-align:center; font-size:12px; color:#ff5555; }
+  .soal { background:#0a0000; padding:16px; margin:14px 0; line-height:1.8; font-size:14px; color:#ddd; border-left:2px solid #ff0000; }
+  .soal b { color:#ff0000; }
+  .soal i { color:#666; font-size:12px; }
+  input { width:100%; padding:14px; background:#000; color:#ff0000; border:1px solid #550000; font-family:inherit; font-size:16px; outline:none; text-align:center; letter-spacing:2px; }
+  input:focus { border-color:#ff0000; box-shadow:0 0 15px #ff0000; }
+  button { width:100%; padding:14px; margin-top:10px; background:#ff0000; color:black; font-weight:bold; border:none; font-family:inherit; cursor:pointer; font-size:15px; letter-spacing:2px; }
+  button:active { background:#fff; }
+  #pesan { text-align:center; margin-top:12px; min-height:22px; font-size:13px; color:#ff6666; }
+  .hint { font-size:11px; color:#333; text-align:center; margin-top:12px; cursor:pointer; }
+  .hint:hover { color:#ff0000; }
+  #pesanSeram { position:fixed; bottom:10px; left:0; width:100%; text-align:center; font-size:11px; color:#440000; z-index:20; pointer-events:none; }
+  .glitchBig { animation:glitchBig 0.15s 4; }
+  @keyframes glitchBig { 0%{transform:translate(5px,2px) rotate(1deg)} 50%{transform:translate(-5px,-2px) rotate(-1deg)} 100%{transform:translate(0,0)} }
+  .hitam { background:black !important; }
+</style>
 </head>
 <body>
-  <h1>🗺️ finish this</h1>
-  <p>click on one of the images to open the challenge</p>
-  <p>finished: <b id="skor">0 / 6</b></p>
-
-  <div class="meja" id="meja"></div>
-
-  <!-- POPUP TANTANGAN -->
-  <div id="popup" class="popup hidden">
-    <div class="popup-box">
-      <button class="close" onclick="tutup()">X</button>
-      <img id="popup-img" src="">
-      <h2 id="popup-judul"></h2>
-      <p id="popup-soal"></p>
-      <input id="jawaban" placeholder="Ketik jawaban kamu...">
-      <button onclick="cekJawaban()">Jawab</button>
-      <p id="hasil"></p>
-    </div>
+<div id="noise"></div>
+<div id="mata">👁️</div>
+<div class="wrap">
+  <div class="peringatan">⚠ KAMU SEDANG DIAWASI ⚠</div>
+  <div class="box" id="kotak">
+    <h1>THEY SEE YOU</h1>
+    <div class="sub" id="subJudul">jangan salah jawab. dia tidak suka orang bodoh.</div>
+    <div class="level" id="levelTeks">LEVEL <b>1</b> / 5</div>
+    <div class="bar-luar"><div id="bar"></div></div>
+    <div class="timer" id="timer">90</div>
+    <div class="nyawa" id="nyawa">☠ ☠ ☠ &nbsp; 3 kesempatan tersisa</div>
+    <div class="soal" id="soal"></div>
+    <input id="jawaban" placeholder="..." autocomplete="off">
+    <button onclick="cek()">MASUKKAN KODE >>></button>
+    <div id="pesan"></div>
+    <div class="hint" onclick="kasihHint()">[ minta petunjuk... kalau berani ]</div>
   </div>
+</div>
+<div id="pesanSeram">jangan menoleh ke belakang.</div>
 
-  <script src="app.js"></script>
+<script>
+  // === PESAN SERAM ACAK ===
+  const seram = ["dia tahu namamu.", "jangan menoleh ke belakang.", "kamera mu menyala.", "dia ada di belakangmu sekarang.", "suara itu bukan dari hp mu.", "90 detik lagi dia datang.", "kenapa kamu masih di sini?", "jangan jawab salah lagi."];
+  setInterval(()=>{
+    document.getElementById("pesanSeram").innerText = seram[Math.floor(Math.random()*seram.length)];
+    if(Math.random()>0.8) document.body.classList.add("hitam");
+    setTimeout(()=>document.body.classList.remove("hitam"), 80);
+  }, 5000);
+
+  // === SUARA JANTUNG / NADA RENDAH ===
+  let audioCtx;
+  function detak(){
+    try{
+      if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+      let o=audioCtx.createOscillator(); let g=audioCtx.createGain();
+      o.connect(g); g.connect(audioCtx.destination);
+      o.frequency.value=55; o.type="sine"; g.gain.value=0.12;
+      o.start(); o.stop(audioCtx.currentTime+0.15);
+      setTimeout(()=>{
+        let o2=audioCtx.createOscillator(); let g2=audioCtx.createGain();
+        o2.connect(g2); g2.connect(audioCtx.destination);
+        o2.frequency.value=45; g2.gain.value=0.08; o2.start(); o2.stop(audioCtx.currentTime+0.12);
+      },200);
+    }catch(e){}
+  }
+  setInterval(detak, 1400);
+  function suaraSalah(){
+    try{
+      if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+      let o=audioCtx.createOscillator(); let g=audioCtx.createGain();
+      o.connect(g); g.connect(audioCtx.destination);
+      o.type="sawtooth"; o.frequency.setValueAtTime(400, audioCtx.currentTime);
+      o.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime+0.6);
+      g.gain.value=0.15; o.start(); o.stop(audioCtx.currentTime+0.6);
+    }catch(e){}
+  }
+
+  // === 5 LEVEL MUSTAHIL ===
+  let level=1, nyawa=3, sisa=90, timerInterval;
+  const data = {
+    1: {
+      soal: "LEVEL 1 - SUARA DARI BAWAH<br><br>Dia berbisik:<br><b>01001000 01000101 01001100 01010000</b><br><br><i>Itu bukan angka biasa. Mesin membacanya sebagai huruf. Tapi huruf itu masih terkunci.<br>Geser setiap huruf 3 langkah ke depan.</i><br><br>Apa yang dia katakan?",
+      jawab: "khos",
+      hint: "Biner -> huruf -> geser +3."
+    },
+    2: {
+      soal: "LEVEL 2 - MORSE YANG HILANG<br><br>Dia mengetuk dinding:<br><b>.. / .- -- / -. --- - / .... . .-. .</b><br><br><i>Titik dan garis. Tapi satu kata sengaja dihapus.<br>Kata yang hilang adalah lawan dari 'ADA'.</i><br><br>Lengkapi pesannya. (huruf kecil, spasi)",
+      jawab: "i am not here",
+      hint: "Morse dulu, baru tebak kata yang hilang."
+    },
+    3: {
+      soal: "LEVEL 3 - WAJAH-WAJAH<br><br>Di dinding ada 4 gambar:<br><b>🌙 ⭐ 🌞 🌑</b><br><br><i>Ambil huruf TERAKHIR dari nama Inggris tiap gambar.<br>Moon, Star, Sun, Moon... tapi urutannya dibalik.</i><br><br>Apa kata-nya? (4 huruf)",
+      jawab: "nurn",
+      hint: "Huruf terakhir, bukan pertama. Terus dibalik."
+    },
+    4: {
+      soal: "LEVEL 4 - DIA MENULIS DI KODE<br><br><i>Buka source web ini. CTRL+U. Cari 'DIA-BERKATA'.</i><br><br>Di sana ada:<br><b>13-15-18-20-1-12</b><br><br><i>Angka = urutan huruf di alfabet. 1=A, 2=B...<br>Tapi itu belum selesai. Balik kata-nya.</i><br><br>Apa yang dia katakan?",
+      jawab: "latrom",
+      hint: "Angka jadi huruf, terus dibalik."
+    },
+    5: {
+      soal: "LEVEL 5 - PINTU TERAKHIR<br><br>Kode terakhir, 3 lapis. Kalau gagal, dia datang.<br><br>Kode: <b>===AdzVmYxM2Y</b><br><br><i>1. Balik total kode.<br>2. Decode Base64.<br>3. Hasilnya adalah kata yang hurufnya digeser 1 langkah ke BELAKANG.<br>Jadi a jadi z, b jadi a...</i><br><br>Apa kata terakhir untuk membuka pintu?",
+      jawab: "keluar",
+      hint: "Balik - decode - geser -1. Jangan sampai salah."
+    }
+  };
+
+  function mulaiTimer(){
+    clearInterval(timerInterval); sisa=90;
+    timerInterval=setInterval(()=>{
+      sisa--;
+      document.getElementById("timer").innerText=sisa;
+      document.getElementById("bar").style.width=(sisa/90*100)+"%";
+      if(sisa<=15){ document.getElementById("timer").style.fontSize="34px"; if(navigator.vibrate) navigator.vibrate(100); }
+      if(sisa<=0){ clearInterval(timerInterval); gameOver(); }
+    },1000);
+  }
+
+  function tampilkan(){
+    document.getElementById("soal").innerHTML=data[level].soal;
+    document.getElementById("levelTeks").innerHTML="LEVEL <b>"+level+"</b> / 5";
+    document.getElementById("jawaban").value="";
+    document.getElementById("pesan").innerText="";
+    document.getElementById("timer").style.fontSize="26px";
+    mulaiTimer();
+  }
+
+  function gameOver(){
+    document.body.style.background="red";
+    document.getElementById("kotak").innerHTML="<h1 style='font-size:32px'>DIA MENEMUKANMU</h1><p style='text-align:center; line-height:2; margin-top:20px; color:#fff'>Waktu habis.<br>Dia sudah di belakangmu.<br><br>Jangan menoleh.</p><button onclick='location.reload()' style='background:black; color:red; border:1px solid red'>COBA LAGI - KALAU BERANI</button>";
+    if(navigator.vibrate) navigator.vibrate([500,200,500]);
+  }
+
+  function cek(){
+    let j=document.getElementById("jawaban").value.trim().toLowerCase();
+    if(j===data[level].jawab){
+      if(level===5){
+        clearInterval(timerInterval);
+        document.getElementById("kotak").innerHTML="<h1 style='color:#00ff41; text-shadow:0 0 15px #00ff41'>KAMU LOLOS</h1><p style='text-align:center; line-height:2; margin-top:15px; color:#ddd'>Kamu membuka pintu terakhir.<br><br>Tapi...<br>Kenapa kamu masih mendengar langkah kaki di belakangmu?<br><br><i>Dia tidak pernah pergi.</i></p><button onclick='location.reload()'>MASUK LAGI</button>";
+        return;
+      }
+      clearInterval(timerInterval);
+      level++; nyawa=3;
+      document.getElementById("nyawa").innerText="☠ ☠ ☠   3 kesempatan tersisa";
+      document.getElementById("pesan").innerText="Pintu terbuka... lanjut. Jangan senang dulu.";
+      document.getElementById("pesan").style.color="#00ff41";
+      setTimeout(tampilkan,1500);
+    } else {
+      suaraSalah();
+      if(navigator.vibrate) navigator.vibrate([300,100,300]);
+      document.getElementById("kotak").classList.add("glitchBig");
+      setTimeout(()=>document.getElementById("kotak").classList.remove("glitchBig"),600);
+      nyawa--;
+      document.getElementById("nyawa").innerText="☠ ".repeat(Math.max(0,nyawa))+"  "+nyawa+" kesempatan tersisa";
+      document.getElementById("pesan").innerText="SALAH. Dia mendekat.";
+      if(nyawa<=0){
+        clearInterval(timerInterval);
+        document.getElementById("pesan").innerText="Kamu kehabisan kesempatan. Dia sudah di sini.";
+        document.getElementById("jawaban").disabled=true;
+        setTimeout(()=>{ nyawa=3; document.getElementById("nyawa").innerText="☠ ☠ ☠   3 kesempatan tersisa"; document.getElementById("jawaban").disabled=false; document.getElementById("pesan").innerText="Dia memberimu satu kesempatan terakhir."; mulaiTimer(); },8000);
+      }
+    }
+  }
+
+  function kasihHint(){ alert("BISIKAN: " + data[level].hint); }
+  document.getElementById("jawaban").addEventListener("keydown", e=>{ if(e.key==="Enter") cek(); });
+  tampilkan();
+</script>
+<!-- DIA-BERKATA: 13-15-18-20-1-12 -->
 </body>
-</html>
+  </html>
