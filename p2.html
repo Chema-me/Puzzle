@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>CHALLENGE 2</title><link rel="stylesheet" href="s.css"></head>
+<body><div id="noise"></div><div class="wrap"><div class="top"><span>● CHALLENGE 2</span><span id="jam">00:00:00</span><span>● REC</span></div>
+<div class="box">
+<h1>CHALLENGE 2</h1><p class="sub">MORSE + LOGIC + TRAP - HARDER</p>
+<div class="soal"><b>DECODE THIS MORSE:</b><br><b>--.. &nbsp; ....- &nbsp; -.- &nbsp; ..---</b><br><br>
+<b>RULE:</b> . = dot, - = dash<br>Z = --.. &nbsp; 4 = ....- &nbsp; K = -.- &nbsp; 2 = ..---<br>
+<b>EXTRA LAYER:</b> The result is ALREADY correct, do not reverse it. Who reverses it will fail.<br>
+<b>TRAP:</b> <b>0000</b> and <b>ADMIN</b> are traps. Enter them = fake message + -1 life.<br><br>
+<i>KEY 1 already obtained: ✓. Only KEY 2 left.</i></div>
+<input id="in2" placeholder="KEY 2" maxlength="4">
+<button onclick="cek2()">🔓 CHECK KEY 2</button>
+<div id="pesan"></div>
+</div><div class="terminal" id="terminal">> ...</div></div>
+<script src="c.js"></script>
+<script>
+if(localStorage.getItem("k1_ok")!=="1"){ window.location.href="index.html"; }
+function cek2(){
+  if(cekLock()) return;
+  let v=document.getElementById("in2").value.trim().toUpperCase();
+  if(_DECOY.includes(v)){pesan("TRAP! Fake message: I never loved you. (That is fake, do not believe it)");gagal();return;}
+  if(_hash(v)===_H2 && v.length===4){
+    localStorage.setItem("k2_ok","1"); localStorage.setItem("salah_v3","0");
+    pesan("KEY 2 CORRECT! Opening VAULT...");
+    setTimeout(()=>{window.location.href="v.html";},800);
+  } else gagal();
+}
+</script></body></html>
