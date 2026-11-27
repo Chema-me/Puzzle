@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>CHALLENGE 1</title><link rel="stylesheet" href="s.css"></head>
+<body><div id="noise"></div><div class="wrap"><div class="top"><span>● CHALLENGE 1</span><span id="jam">00:00:00</span><span>● REC</span></div>
+<div class="box">
+<h1>CHALLENGE 1</h1><p class="sub">BINARY + DECOY + HASH - SERIOUSLY HARD</p>
+<div class="soal"><b>DECODE THIS:</b><br><b>01011000 00110111 01010001 00111001</b><br><br>
+<b>RULE:</b> 8 bits = 1 character. Example: 01000001 = A<br>
+<b>TRAP:</b> Binary <i>00110001 00110010 00110011 00110100</i> = 1234 is FAKE.<br>
+<b>CHECK:</b> System does not store the key, only HASH. Hash match = pass.<br><br>
+<i>Answer is 4 characters, uppercase + numbers.</i></div>
+<input id="in1" placeholder="KEY 1" maxlength="4">
+<button onclick="cek1()">🔓 CHECK KEY 1</button>
+<div id="pesan"></div>
+</div><div class="terminal" id="terminal">> ...</div></div>
+<script src="c.js"></script>
+<script>
+function cek1(){
+  if(cekLock()) return;
+  let v=document.getElementById("in1").value.trim().toUpperCase();
+  if(_DECOY.includes(v)){pesan("THAT IS A FAKE KEY! CAUGHT CHEATING.");gagal();return;}
+  if(_hash(v)===_H1 && v.length===4){
+    localStorage.setItem("k1_ok","1"); localStorage.setItem("salah_v3","0");
+    pesan("KEY 1 CORRECT! Opening next file...");
+    setTimeout(()=>{window.location.href="p2.html";},800);
+  } else gagal();
+}
+</script></body></html>
