@@ -1,0 +1,20 @@
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;color:#f00;font-family:'Courier New',monospace;overflow:hidden}
+#noise{position:fixed;inset:0;background:repeating-linear-gradient(0deg,rgba(255,0,0,.05) 0 1px,transparent 1px 3px);z-index:99;pointer-events:none}
+.wrap{max-width:620px;margin:0 auto;padding:12px;height:100vh;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:20}
+.top{display:flex;justify-content:space-between;font-size:10px;letter-spacing:2px;border:1px solid #550000;padding:8px;background:#000}
+.box{border:1px solid #550000;background:rgba(5,0,0,.98);padding:20px;box-shadow:0 0 50px #f00;margin-top:10px;max-height:80vh;overflow:auto}
+h1{font-size:22px;text-align:center;text-shadow:0 0 15px #f00;letter-spacing:3px}
+.sub{text-align:center;font-size:11px;color:#888;margin-top:6px;line-height:1.7}
+.soal{background:#0a0000;padding:14px;margin:14px 0;line-height:1.8;font-size:13px;color:#ddd;border-left:2px solid #f00;word-break:break-all}
+.soal b{color:#f00}.soal i{color:#666;font-size:11px}
+input{width:100%;padding:14px;background:#000;color:#f00;border:1px solid #550000;font-family:inherit;font-size:16px;outline:none;text-align:center;letter-spacing:3px;text-transform:uppercase}
+button{width:100%;padding:14px;margin-top:10px;background:#f00;color:#000;font-weight:bold;border:none;font-family:inherit;cursor:pointer;letter-spacing:2px}
+button:active{background:#fff}
+#pesan{text-align:center;margin-top:12px;min-height:22px;font-size:13px;color:#ff8888;line-height:1.6}
+.hint{font-size:11px;color:#333;text-align:center;margin-top:12px;cursor:pointer;line-height:1.7}
+.fileBox{border:1px dashed #550000;padding:12px;margin:10px 0;text-align:center;color:#aaa;font-size:13px;line-height:1.8}
+.fileBox a{display:inline-block;margin-top:6px;padding:10px 16px;background:#f00;color:#000;font-weight:bold;text-decoration:none}
+.pesanBesar{background:#0a0000;border:1px solid #f00;padding:16px;color:#fff;line-height:1.8;font-size:14px;white-space:pre-wrap;word-break:break-word}
+.terminal{font-size:11px;color:#00ff41;background:#000;padding:8px;margin-top:10px;border:1px solid #003300;min-height:32px;line-height:1.6}
+.glitch{animation:gl .15s 4}@keyframes gl{0%{transform:translate(5px,2px)}50%{transform:translate(-5px,-2px)}100%{transform:translate(0)}}
