@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>VAULT</title><link rel="stylesheet" href="s.css"></head>
+<body><div id="noise"></div><div class="wrap"><div class="top"><span>● VAULT</span><span id="jam">00:00:00</span><span>● REC</span></div>
+<div class="box" id="kotakBrankas">
+<h1>VAULT - VERIFICATION</h1><p class="sub">For security, keys are not stored in the browser.<br>Enter the combined key again to decrypt:</p>
+<div class="soal">Format: <b>KEY1-KEY2</b><br>Example format: <b>XXXX-XXXX</b><br><br><i>Without this, message & files stay as random numbers.</i></div>
+<input id="ingab" placeholder="X7Q9-Z4K2" maxlength="9">
+<button onclick="buka()">🔓 DECRYPT VAULT</button>
+<div id="pesan"></div>
+</div><div class="terminal" id="terminal">> vault locked...</div></div>
+<script src="c.js"></script>
+<script>
+const _VAULT_PESAN=[229,66,74,107,78,164,104,123,10,214,158,131,195,16,34,179,77,221,107,241,10,77,105,210,252,35,61,152,59,214,225,76,32,208,172,94,42,177,70,78,109,94,63,157,8,38,135,75,228,28,80,88,209,103,228,17,221,32,57,30,234,85,221,141,87,70,97,87,123,160,205,47,33,152,153,70,121,221,208,220];
+const _VAULT_FILE1=[157,78,12,200,192,90,56,55,147,153,241,56,187,183,126,109,148,35,145,22,234,237,236,61,126];
+const _VAULT_FILE2=[157,78,12,200,192,90,56,55,147,153,241,56,187,183,126,109,148,35,145,22,234,237,236,61,125];
+if(localStorage.getItem("k1_ok")!=="1"||localStorage.getItem("k2_ok")!=="1"){window.location.href="index.html";}
+function buka(){
+  if(cekLock()) return;
+  let v=document.getElementById("ingab").value.trim().toUpperCase();
+  let p=v.split("-");
+  if(p.length===2 && _hash(p[0])===_H1 && _hash(p[1])===_H2){
+    let pesan=_dec(_VAULT_PESAN,v,"pesan");
+    let f1=_dec(_VAULT_FILE1,v,"file");
+    let f2=_dec(_VAULT_FILE2,v,"file");
+    let f1h=f1.startsWith("http")?`<a href="${f1}" target="_blank">⬇ OPEN FILE 1</a>`:`<span style="color:#888">[ ${f1} ]<br>Example encrypted file. Replace with GEN() in c.js</span>`;
+    let f2h=f2.startsWith("http")?`<a href="${f2}" target="_blank">⬇ OPEN FILE 2</a>`:`<span style="color:#888">[ ${f2} ]</span>`;
+    document.getElementById("kotakBrankas").innerHTML=`<h1 style="color:#00ff41">VAULT UNLOCKED</h1><p class="sub">Decrypt successful. Keystream matched.</p>
+    <div class="fileBox"><b>FILE 1 - DOCUMENT</b><br>${f1h}</div>
+    <div class="fileBox"><b>FILE 2 - EVIDENCE</b><br>${f2h}</div>
+    <div style="text-align:center;font-size:12px;letter-spacing:2px;margin:12px 0">--- ORIGINAL MESSAGE (DECRYPTED) ---</div>
+    <div class="pesanBesar">${pesan}</div>
+    <button onclick="if(confirm('Lock again & delete traces?')){localStorage.clear();location.href='index.html'}">🔒 LOCK AGAIN & DELETE TRACES</button><div id="pesan"></div>`;
+  } else {pesan("WRONG COMBINATION. DECRYPT FAILED."); gagal();}
+}
+</script></body></html>
